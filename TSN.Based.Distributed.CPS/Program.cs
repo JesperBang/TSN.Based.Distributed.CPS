@@ -6,7 +6,7 @@ namespace TSN.Based.Distributed.CPS
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            new Project2();
         }
     }
 }
