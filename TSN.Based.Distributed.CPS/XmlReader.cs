@@ -5,14 +5,14 @@ using System.Security.Cryptography;
 using System.Xml.Linq;
 using TSN.Based.Distributed.CPS.Models;
 
-namespace SystemsOptimization
+namespace TSN.Based.Distributed.CPS
 {
     public class XmlReader
     {
 
         // file of jobs
 
-        public static (List<Device>, List<Link>, List<Stream>) LoadXml(int xml)
+        public static (List<Device>, List<Link>, List<Stream>) LoadXml()
         {
             string xmlfile = "TC0_example.app_network_description";
             //switch (xml)
@@ -36,34 +36,42 @@ namespace SystemsOptimization
             //Read xml file
             XDocument xdoc = XDocument.Load(filename);
 
-            //get the CPU's
-            IEnumerable<XElement> cpus = xdoc.Element("Model").Element("Platform").Descendants("MCP");
-            foreach (XElement item1 in cpus)
+            // get the devices
+            IEnumerable<XElement> devicess = xdoc.Element("NetworkDescription").Descendants("device");
+            foreach (XElement item1 in devicess)
             {
-                foreach (XElement item2 in item1.Descendants())
-                {
-                    Core core = new Core();
-                    core.MCPId = Convert.ToInt32(item1.Attribute("Id").Value);
-                    core.CoreId = Convert.ToInt32(item2.Attribute("Id").Value);
-                    string corestring = Convert.ToString(item2.Attribute("WCETFactor").Value);
-                    core.WCETFactor = double.Parse(corestring, CultureInfo.InvariantCulture);
-                    cores.Add(core);
-                }
+                Device device = new Device();
+                device.name = Convert.ToString(item1.Attribute("name").Value);
+                device.type = Convert.ToString(item1.Attribute("type").Value);
+                devices.Add(device);
             }
 
-            //get the task
-            IEnumerable<XElement> taskss = xdoc.Element("Model").Element("Application").Descendants("Task");
-            foreach (XElement item3 in taskss)
+            IEnumerable<XElement> links = xdoc.Element("NetworkDescription").Descendants("link");
+            foreach (XElement item2 in links)
             {
-                Task task = new Task();
-                task.Deadline = Convert.ToInt32(item3.Attribute("Deadline").Value);
-                task.Id = Convert.ToInt32(item3.Attribute("Id").Value);
-                task.Period = Convert.ToInt32(item3.Attribute("Period").Value);
-                task.WCET = Convert.ToInt32(item3.Attribute("WCET").Value);
-                tasks.Add(task);
+                Link linkss = new Link();
+                linkss.source = Convert.ToString(item2.Attribute("src").Value);
+                linkss.destination = Convert.ToString(item2.Attribute("dest").Value);
+                linkss.speed = double.Parse(Convert.ToString(item2.Attribute("speed").Value), CultureInfo.InvariantCulture);
+                link.Add(linkss);
+
             }
 
-            return (tasks, cores);
+            IEnumerable<XElement> streams = xdoc.Element("NetworkDescription").Descendants("stream");
+            foreach (XElement item3 in streams)
+            {
+                Stream streamss = new Stream();
+                streamss.deadline = Convert.ToInt32(item3.Attribute("deadline").Value);
+                streamss.streamId = Convert.ToString(item3.Attribute("id").Value);
+                streamss.destination = Convert.ToString(item3.Attribute("dest").Value);
+                streamss.source = Convert.ToString(item3.Attribute("src").Value);
+                streamss.size = Convert.ToInt32(item3.Attribute("size").Value);
+                streamss.period = Convert.ToInt32(item3.Attribute("period").Value);
+                streamss.rl = Convert.ToInt32(item3.Attribute("rl").Value);
+                stream.Add(streamss);
+            }
+
+            return (devices, link, stream);
         }
     }
 }
