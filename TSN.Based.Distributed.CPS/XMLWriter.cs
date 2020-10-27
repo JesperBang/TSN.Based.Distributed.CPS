@@ -5,11 +5,11 @@ using System.Resources;
 using System.Text;
 using System.Xml;
 
-namespace SystemsOptimization
+namespace TSN.Based.Distributed.CPS
 {
     public class XMLWriter
     {
-        public static void To_XML(State s, double laxity, int xml)
+        public static void To_XML(String s, double laxity, int xml)
         {
 
             string xmlsolution = "solution_small.xml";
@@ -31,17 +31,18 @@ namespace SystemsOptimization
 
             writer.WriteStartDocument();
             writer.WriteStartElement("solution");
-            foreach(AssignedTask c in s.Core)
-            {
-                foreach(Task t in c.tasks)
+            foreach(Char c in s)
+            { /*
+                foreach(char t in s
                 {
                 writer.WriteStartElement("Task");
-                writer.WriteAttributeString("Id", t.Id.ToString());
+                writer.WriteAttributeString("Id", s.Id.ToString());
                 writer.WriteAttributeString("MCP", c.MCPId.ToString());
                 writer.WriteAttributeString("Core", c.CoreId.ToString());
                 writer.WriteAttributeString("WCRT", Math.Round(t.WCET * c.WCETFactor).ToString());
                 writer.WriteEndElement();
                 }
+                */
             }
             writer.WriteEndElement();
             writer.WriteComment("Total Laxity: " + Math.Round(laxity).ToString());
