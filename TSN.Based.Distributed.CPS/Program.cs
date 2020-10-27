@@ -25,11 +25,16 @@ namespace TSN.Based.Distributed.CPS
             /*
              * (1.25 B/us = 10 Mbit/s).
              * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
-             * En stream indeholder data på eks. size = 100 Bytes, som kører gennem alle links i sin route.
+             * Dvs. så meget kan der max gå gennem linket, det er bandwith.
+             * En stream indeholder data på eks. size = 100 Bytes, som skal køre gennem alle links i sin route,
+             * på en deadline på eks. 10.000 us = 0,01 s. 
              * 
-             * Dvs. 1.250.000 Bytes kan køre gennem et link, og hvis der findes 2 routes der kører gennem den samme
-             * link, begge med en data size på 100 bytes, er der 1.250.000 Bytes - 200 Bytes = 1248950 bytes/s
-             * tilrådighed på det givne link.
+             * Den brugte bandwith på en stream er så size/deadline = 800 bit / 0,01 s = 80.000 bit/s = 0,08 Mbit/s
+             * 
+             * Man tjekker alle streams' dst eks. ES4, hvis to streams har samme dst skal de ligges sammen ved 
+             * beregningen af brugt bandtwidth. Hvis det ikke overskrider speed eks. 10 Mbit/s er det en feasible 
+             * stream.
+             * 
              * 
              */
 
