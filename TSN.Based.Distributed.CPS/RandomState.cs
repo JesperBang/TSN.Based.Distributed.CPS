@@ -13,12 +13,13 @@ namespace TSN.Based.Distributed.CPS
             int num_links = links.Count;
             int num_devices = devices.Count;
 
-            create a List<Stream> random_stream
-            of the same size as the incoming stream
+            //create a List<Stream> random_stream
+              of the same size as the incoming stream
+            Todo here.
                 
             
 
-            
+            //add routes to the streams
             for (i to num_stream) {
                 //add route to stream, a route includes links
                 random_stream[i] = findPath(stream[i].getSrc(), stream[i].getDst(), links, devices);
