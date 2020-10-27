@@ -24,12 +24,11 @@ namespace TSN.Based.Distributed.CPS
             //Duran tester lige her efter kommentar linjen.
             /*
              * (1.25 B/us = 10 Mbit/s).
-             * Et link fra dets src til dst er eks. 10 Mbit/s = 10000 bit/s.
+             * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
              * En stream indeholder data på eks. size = 100 Bytes, som kører gennem alle links i sin route.
              * 
-             * Hvis 8 bits = 1 byte, så er 10000 bit/s = 1250 bytes/s.
-             * Dvs. 1250 bytes kan køre gennem et link, og hvis der findes 2 routes der kører gennem den samme
-             * link, begge med en data size på 100 bytes, er der 1250 bytes - 200 bytes = 1050 bytes/s
+             * Dvs. 1.250.000 Bytes kan køre gennem et link, og hvis der findes 2 routes der kører gennem den samme
+             * link, begge med en data size på 100 bytes, er der 1.250.000 Bytes - 200 Bytes = 1248950 bytes/s
              * tilrådighed på det givne link.
              * 
              */
