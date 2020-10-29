@@ -8,6 +8,10 @@ namespace TSN.Based.Distributed.CPS
     {
 
         Link link1, link2, link3, link4, link5, link6, link7, link8;
+        List<Stream> streams;
+        Stream stream0, stream1;
+        Route route1, route2, route3;
+        
 
         public DuranTest()
         {
@@ -20,6 +24,14 @@ namespace TSN.Based.Distributed.CPS
             link6 = new Link();
             link7 = new Link();
             link8 = new Link();
+            List<Stream> streams = new List<Stream>();
+            stream0 = new Stream();
+            stream1 = new Stream();
+            streams.Add(stream0);
+            streams.Add(stream1);
+            route1 = new Route();
+            route2 = new Route();
+            route3 = new Route();
 
             link1.source = "ES1";
             link1.destination = "SW0";
@@ -62,10 +74,6 @@ namespace TSN.Based.Distributed.CPS
             links.Add(link7);
             links.Add(link8);
 
-            Route route1 = new Route();
-            Route route2 = new Route();
-            Route route3 = new Route();
-
 
             route1.links.Add(link1);
             route1.links.Add(link5);
@@ -81,6 +89,26 @@ namespace TSN.Based.Distributed.CPS
             route3.links.Add(link6);
             route3.src = "ES2";
             route3.dest = "ES4";
+
+            stream0.streamId = "Stream0";
+            stream0.source = "ES1";
+            stream0.destination = "ES3";
+            stream0.size = 100;
+            stream0.period = 1000;
+            stream0.deadline = 10000;
+            stream0.rl = 1;
+
+            stream1.streamId = "Stream1";
+            stream1.source = "ES2";
+            stream1.destination = "ES4";
+            stream1.size = 100;
+            stream1.period = 1000;
+            stream1.deadline = 10000;
+            stream1.rl = 2;
+
+            
+
+            
         }
 
 
@@ -102,7 +130,15 @@ namespace TSN.Based.Distributed.CPS
              */
 
 
-            /* adding some links */
+            public void start()
+        {
+            float used_bandwith = stream0.size / stream0.deadline;
+            Dictionary<string, float> dict;
+            foreach (Stream item in streams)
+            {
+                
+            }
+        }
             
             
 
