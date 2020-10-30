@@ -106,7 +106,7 @@ namespace TSN.Based.Distributed.CPS
 
 
 
-            var test = checkBandwidth(stream0, routes);
+            var test = isBandwidthExceeded(stream0, routes);
 
             Console.WriteLine("returned " + test);
         }
@@ -118,15 +118,12 @@ namespace TSN.Based.Distributed.CPS
          * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
          * Dvs. så meget kan der max gå gennem linket, det er bandwith.
          * En stream indeholder data på eks. size = 100 Bytes, som skal køre gennem alle links i sin route,
-         * på en deadline på eks. 10.000 us = 0,01 s. 
+         * på en periode på eks. 10.000 us = 0,01 s. 
          * 
          * Den brugte bandwith på en stream er så size/period = 800 bit / 0,01 s = 80.000 bit/s = 0,08 Mbit/s
          * 
-         * Man tjekker alle streams' dst eks. ES4, hvis to streams har samme dst skal de ligges sammen ved 
-         * beregningen af brugt bandtwidth. Hvis det ikke overskrider speed eks. 10 Mbit/s er det en feasible 
-         * stream.
-         * 
-         * 
+         * Man tjekker alle links i en route, hvis der findes flere links i forskellige routes der benytter den samme link, skal de ligges sammen ved 
+         * beregningen af den brugte bandtwidth. Hvis den brugte bandwidth ikke overskrider speed eks. 10 Mbit/s, retuneres false.  
          */
 
 
@@ -137,10 +134,10 @@ namespace TSN.Based.Distributed.CPS
         /// </summary>
         /// <param name="s">Stream</param>
         /// <param name="r">List of route objects</param>
-        public bool checkBandwidth(Stream s, List<Route> r)
+        public bool isBandwidthExceeded(Stream s, List<Route> r)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
-            double used_bandwidth_mbits = (((s.size * 8)/ 1000000) / (s.period/1000000));
+            double used_bandwidth_mbits = ((s.size * 8)/ (1000000)) / (s.period/1000000);
 
             foreach (Route item in r)
             {
