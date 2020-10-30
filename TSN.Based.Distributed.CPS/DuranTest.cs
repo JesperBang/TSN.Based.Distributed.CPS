@@ -9,13 +9,13 @@ namespace TSN.Based.Distributed.CPS
 
         Link link1, link2, link3, link4, link5, link6, link7, link8;
         List<Stream> streams;
+        List<Route> routes;
         Stream stream0, stream1;
         Route route1, route2, route3;
         
-
         public DuranTest()
         {
-            List<Link> links = new List<Link>();
+            streams = new List<Stream>();
             link1 = new Link();
             link2 = new Link();
             link3 = new Link();
@@ -24,7 +24,7 @@ namespace TSN.Based.Distributed.CPS
             link6 = new Link();
             link7 = new Link();
             link8 = new Link();
-            List<Stream> streams = new List<Stream>();
+
             stream0 = new Stream();
             stream1 = new Stream();
             streams.Add(stream0);
@@ -35,7 +35,7 @@ namespace TSN.Based.Distributed.CPS
 
             link1.source = "ES1";
             link1.destination = "SW0";
-            link1.speed = 1.25;
+            link1.speed = 0.25;
 
             link2.source = "ES2";
             link2.destination = "SW0";
@@ -65,30 +65,28 @@ namespace TSN.Based.Distributed.CPS
             link8.destination = "ES4";
             link8.speed = 1.25;
 
-            links.Add(link1);
-            links.Add(link2);
-            links.Add(link3);
-            links.Add(link4);
-            links.Add(link5);
-            links.Add(link6);
-            links.Add(link7);
-            links.Add(link8);
-
-
+            route1.links = new List<Link>();
             route1.links.Add(link1);
             route1.links.Add(link5);
             route1.src = "ES1";
             route1.dest = "ES3";
 
+            route2.links = new List<Link>();
             route2.links.Add(link4);
             route2.links.Add(link8);
             route2.src = "ES2";
             route2.dest = "ES4";
 
+            route3.links = new List<Link>();
             route3.links.Add(link2);
             route3.links.Add(link6);
             route3.src = "ES2";
             route3.dest = "ES4";
+
+            routes = new List<Route>();
+            routes.Add(route1);
+            routes.Add(route2);
+            routes.Add(route3);
 
             stream0.streamId = "Stream0";
             stream0.source = "ES1";
@@ -106,46 +104,80 @@ namespace TSN.Based.Distributed.CPS
             stream1.deadline = 10000;
             stream1.rl = 2;
 
-            
 
-            
+
+            var test = checkBandwidth(stream0, routes);
+
+            Console.WriteLine("returned " + test);
         }
 
 
-       
-            /*
-             * (1.25 B/us = 10 Mbit/s).
-             * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
-             * Dvs. så meget kan der max gå gennem linket, det er bandwith.
-             * En stream indeholder data på eks. size = 100 Bytes, som skal køre gennem alle links i sin route,
-             * på en deadline på eks. 10.000 us = 0,01 s. 
-             * 
-             * Den brugte bandwith på en stream er så size/deadline = 800 bit / 0,01 s = 80.000 bit/s = 0,08 Mbit/s
-             * 
-             * Man tjekker alle streams' dst eks. ES4, hvis to streams har samme dst skal de ligges sammen ved 
-             * beregningen af brugt bandtwidth. Hvis det ikke overskrider speed eks. 10 Mbit/s er det en feasible 
-             * stream.
-             * 
-             * 
-             */
+
+        /*
+         * (1.25 B/us = 10 Mbit/s).
+         * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
+         * Dvs. så meget kan der max gå gennem linket, det er bandwith.
+         * En stream indeholder data på eks. size = 100 Bytes, som skal køre gennem alle links i sin route,
+         * på en deadline på eks. 10.000 us = 0,01 s. 
+         * 
+         * Den brugte bandwith på en stream er så size/period = 800 bit / 0,01 s = 80.000 bit/s = 0,08 Mbit/s
+         * 
+         * Man tjekker alle streams' dst eks. ES4, hvis to streams har samme dst skal de ligges sammen ved 
+         * beregningen af brugt bandtwidth. Hvis det ikke overskrider speed eks. 10 Mbit/s er det en feasible 
+         * stream.
+         * 
+         * 
+         */
 
 
-            public void start()
+        /// <summary>
+        /// checks if the bandwidth of 
+        /// links are exceeded
+        /// and return true if it is.
+        /// </summary>
+        /// <param name="s">Stream</param>
+        /// <param name="r">List of route objects</param>
+        public bool checkBandwidth(Stream s, List<Route> r)
         {
-            float used_bandwith = stream0.size / stream0.deadline;
-            Dictionary<string, float> dict;
-            foreach (Stream item in streams)
+            Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
+            double used_bandwidth_mbits = (((s.size * 8)/ 1000000) / (s.period/1000000));
+
+            foreach (Route item in r)
             {
-                
+                foreach (Link l in item.links)
+                {
+                    double bandwidth_mbits = ((l.speed* 8 * 1000000) / (1000000));
+                    string link_name = l.source + "_" + l.destination;
+                    
+                    if (dict.ContainsKey(link_name))
+                    {
+                        var old_val = dict[link_name][bandwidth_mbits];
+                        Dictionary<double, double> temp = new Dictionary<double, double>(){ { bandwidth_mbits, old_val + used_bandwidth_mbits}};
+                        dict[link_name] = temp;  
+                    }
+                    else
+                    {
+                        Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
+                        dict[link_name] = temp;
+                    }
+                }            
             }
+            
+
+            foreach (var item in dict.Values)
+            {
+                foreach (var d in item)
+                {
+                    if (d.Value > d.Key)
+                        return true;
+                }
+            }
+            return false;
+
         }
-            
-            
-
-
-
-
-
-
     }
+
+
+
+
 }

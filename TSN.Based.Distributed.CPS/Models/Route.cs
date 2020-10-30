@@ -6,7 +6,7 @@ using TSN.Based.Distributed.CPS.Models;
 namespace TSN.Based.Distributed.CPS
 {
     [Serializable]
-    class Route
+    public class Route
     {
 
         public List<Link> links { get; set; }
