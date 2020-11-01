@@ -10,7 +10,7 @@ namespace UnitTestTSN
     {
         static Link link1, link2, link3, link4, link5, link6, link7, link8;
         static List<Route> routes;
-        static Stream stream0, stream1;
+        static Stream stream0, stream1, stream2;
         static Route route1, route2, route3;
         static LinkUtil linkUtil = new LinkUtil();
 
@@ -34,6 +34,15 @@ namespace UnitTestTSN
             stream1.period = 1000;
             stream1.deadline = 10000;
             stream1.rl = 2;
+
+            stream2 = new Stream();
+            stream2.streamId = "Stream1";
+            stream2.source = "ES2";
+            stream2.destination = "ES4";
+            stream2.size = 10000;
+            stream2.period = 1000;
+            stream2.deadline = 10000;
+            stream2.rl = 2;
 
             link1 = new Link();
             link1.source = "ES1";
@@ -96,10 +105,7 @@ namespace UnitTestTSN
             route3.src = "ES2";
             route3.dest = "ES4";
 
-            routes = new List<Route>();
-            routes.Add(route1);
-            routes.Add(route2);
-            routes.Add(route3);        
+            routes = new List<Route>();      
         }
 
         [TestInitialize]
@@ -118,8 +124,20 @@ namespace UnitTestTSN
         [TestMethod]
         public void isBandwidthExceeded_ReturnsFalse()
         {
-            var result = linkUtil.isBandwidthExceeded(stream1, routes);
+            routes.Clear();
+            routes.Add(route1);
+            var result = linkUtil.isBandwidthExceeded(stream0, routes);
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void isBandwidthExceeded_ReturnsTrue()
+        {
+            routes.Clear();
+            routes.Add(route2);
+            routes.Add(route3);
+            var result = linkUtil.isBandwidthExceeded(stream2, routes);
+            Assert.IsTrue(result);
         }
     }
 }
