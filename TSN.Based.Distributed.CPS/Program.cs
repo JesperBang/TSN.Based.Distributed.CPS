@@ -17,18 +17,7 @@ namespace TSN.Based.Distributed.CPS
 
 
             Console.Read();
-
-
-         
-
-            //Duran tester lige her efter kommentar linjen.
-            DuranTest test = new DuranTest();
             
-
-            
-
-
-
 
         }
     }
