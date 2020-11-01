@@ -126,7 +126,7 @@ namespace UnitTestTSN
 
 
         [TestMethod]
-        public void isBandwithExceeded_ReturnsFalse()
+        public void isBandwidthExceeded_ReturnsFalse()
         {
             var result = linkUtil.isBandwidthExceeded(stream1, routes);
             Assert.IsFalse(result);
