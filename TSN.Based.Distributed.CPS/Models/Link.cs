@@ -1,5 +1,4 @@
-﻿using Google.Protobuf.Reflection;
-using System;
+﻿using System;
 
 namespace TSN.Based.Distributed.CPS.Models
 {

@@ -5,9 +5,4 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Google.OrTools" Version="8.0.8283" />
-    <PackageReference Include="Google.OrTools.runtime.win-x64" Version="8.0.8283" />
-  </ItemGroup>
-
 </Project>
