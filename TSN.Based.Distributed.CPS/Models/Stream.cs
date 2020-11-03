@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSN.Based.Distributed.CPS.Models
 {
@@ -12,6 +13,8 @@ namespace TSN.Based.Distributed.CPS.Models
         public double period { get; set; }
         public double deadline { get; set; }
         public int rl { get; set; }
+        public List<Route> Route { get; set; }
+        public double Cost { get; set; }
     }
 
     public class Solution

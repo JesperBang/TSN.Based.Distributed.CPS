@@ -12,98 +12,117 @@ namespace UnitTestTSN
         static List<Route> routes;
         static Stream stream0, stream1, stream2;
         static Route route1, route2, route3;
-        static LinkUtil linkUtil = new LinkUtil();
+        static readonly LinkUtil linkUtil = new LinkUtil();
 
         [ClassInitialize]
-        public static void BeforeClass(TestContext tc)
+        public static void BeforeClass()
         {
-            stream0 = new Stream();
-            stream0.streamId = "Stream0";
-            stream0.source = "ES1";
-            stream0.destination = "ES3";
-            stream0.size = 100;
-            stream0.period = 1000;
-            stream0.deadline = 10000;
-            stream0.rl = 1;
+            stream0 = new Stream
+            {
+                streamId = "Stream0",
+                source = "ES1",
+                destination = "ES3",
+                size = 100,
+                period = 1000,
+                deadline = 10000,
+                rl = 1,
+            };
 
-            stream1 = new Stream();
-            stream1.streamId = "Stream1";
-            stream1.source = "ES2";
-            stream1.destination = "ES4";
-            stream1.size = 100;
-            stream1.period = 1000;
-            stream1.deadline = 10000;
-            stream1.rl = 2;
+            stream1 = new Stream {
+                streamId = "Stream1",
+                source = "ES2",
+                destination = "ES4",
+                size = 100,
+                period = 1000,
+                deadline = 10000,
+                rl = 2,
+            };
+            
 
-            stream2 = new Stream();
-            stream2.streamId = "Stream1";
-            stream2.source = "ES2";
-            stream2.destination = "ES4";
-            stream2.size = 10000;
-            stream2.period = 1000;
-            stream2.deadline = 10000;
-            stream2.rl = 2;
+            stream2 = new Stream {
+                streamId = "Stream1",
+                source = "ES2",
+                destination = "ES4",
+                size = 10000,
+                period = 1000,
+                deadline = 10000,
+                rl = 2,
+            };
 
-            link1 = new Link();
-            link1.source = "ES1";
-            link1.destination = "SW0";
-            link1.speed = 0.25;
 
-            link2 = new Link();
-            link2.source = "ES2";
-            link2.destination = "SW0";
-            link2.speed = 1.25;
+            link1 = new Link {
+            source = "ES1",
+            destination = "SW0",
+            speed = 1.25,
+        };
 
-            link3 = new Link();
-            link3.source = "ES1";
-            link3.destination = "SW1";
-            link3.speed = 1.25;
+            link2 = new Link {
+                source = "ES2",
+                destination = "SW0",
+                speed = 1.25,
+        };
+            
 
-            link4 = new Link();
-            link4.source = "ES2";
-            link4.destination = "SW1";
-            link4.speed = 1.25;
+            link3 = new Link {
+                source = "ES1",
+                destination = "SW1",
+                speed = 1.25,
+        };
+            
+            link4 = new Link {
+                source = "ES2",
+                destination = "SW1",
+                speed = 1.25,
+        };
+            
 
-            link5 = new Link();
-            link5.source = "SW0";
-            link5.destination = "ES3";
-            link5.speed = 1.25;
+            link5 = new Link {
+                source = "SW0",
+                destination = "ES3",
+                speed = 1.25,
+        };
+            
 
-            link6 = new Link();
-            link6.source = "SW0";
-            link6.destination = "ES4";
-            link6.speed = 1.25;
+            link6 = new Link {
+                source = "SW0",
+                destination = "ES4",
+                speed = 1.25,
+        };
+            
 
-            link7 = new Link();
-            link7.source = "SW1";
-            link7.destination = "ES3";
-            link7.speed = 1.25;
+            link7 = new Link {
+                source = "SW1",
+                destination = "ES3",
+                speed = 1.25,
+        };
+        
+            link8 = new Link {
+                source = "SW1",
+                destination = "ES4",
+                speed = 1.25,
+        };
+            
 
-            link8 = new Link();
-            link8.source = "SW1";
-            link8.destination = "ES4";
-            link8.speed = 1.25;
+            route1 = new Route {
+                links = new List<Link> { link1, link5 },
+                src = "ES1",
+                dest = "ES3",
+        };
+            
 
-            route1 = new Route();
-            route1.links = new List<Link>();
-            route1.links.Add(link1);
-            route1.links.Add(link5);
-            route1.src = "ES1";
-            route1.dest = "ES3";
+            route2 = new Route {
+                links = new List<Link> { link4, link8 },
+                src = "ES2",
+                dest = "ES4",
+        };
+            
 
-            route2 = new Route();
-            route2.links = new List<Link>();
-            route2.links.Add(link4);
-            route2.links.Add(link8);
-            route2.src = "ES2";
-            route2.dest = "ES4";
-
-            route3 = new Route();
-            route3.links = new List<Link>();
-            route3.links.Add(link2);
-            route3.links.Add(link6);
-            route3.src = "ES2";
-            route3.dest = "ES4";
+            route3 = new Route {
+                links = new List<Link> { link2, link6 },
+                src = "ES2",
+                dest = "ES4",
+        };
+            
 
             routes = new List<Route>();      
         }
@@ -111,7 +130,7 @@ namespace UnitTestTSN
         [TestInitialize]
         public void BeforeTest()
         {
-            
+            routes.Clear();
         }
 
         [TestCleanup]
@@ -122,21 +141,19 @@ namespace UnitTestTSN
 
 
         [TestMethod]
-        public void isBandwidthExceeded_ReturnsFalse()
+        public void IsBandwidthExceeded_ReturnsFalse()
         {
-            routes.Clear();
             routes.Add(route1);
-            var result = linkUtil.isBandwidthExceeded(stream0, routes);
+            var result = linkUtil.IsBandwidthExceeded(stream0, routes);
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public void isBandwidthExceeded_ReturnsTrue()
+        public void IsBandwidthExceeded_ReturnsTrue()
         {
-            routes.Clear();
             routes.Add(route2);
             routes.Add(route3);
-            var result = linkUtil.isBandwidthExceeded(stream2, routes);
+            var result = linkUtil.IsBandwidthExceeded(stream2, routes);
             Assert.IsTrue(result);
         }
     }

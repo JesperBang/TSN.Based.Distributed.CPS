@@ -7,11 +7,9 @@ namespace TSN.Based.Distributed.CPS.Models
     public class Solution
     {
         public string StreamId { get; set; }
-        public List<Route> routes { get; set; }
 
-        public int size { get; set; }
-
-
-
+        public List<Route> Route { get; set; }
+        public double Cost { get; set; }
+        public int size { get; set;}
     }
 }

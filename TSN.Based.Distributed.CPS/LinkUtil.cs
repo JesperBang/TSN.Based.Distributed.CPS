@@ -32,7 +32,7 @@ namespace TSN.Based.Distributed.CPS
         /// </summary>
         /// <param name="s">Stream</param>
         /// <param name="r">List of route objects</param>
-        public bool isBandwidthExceeded(Stream s, List<Route> r)
+        public bool IsBandwidthExceeded(Stream s, List<Route> r)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
             double used_bandwidth_mbits = ((s.size * 8)/ (1000000)) / (s.period/1000000);
