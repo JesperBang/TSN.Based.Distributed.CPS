@@ -8,12 +8,12 @@ namespace TSN.Based.Distributed.CPS
     public class UpdateFunc
     {
 
-        public List<Stream> updateSolution(List<Solution> solutions, List<Link> links, List<Device> devices)
+        public List<Solution> updateSolution(List<Solution> solutions, List<Link> links, List<Device> devices)
         {
             PathFinder pf = new PathFinder();
             for (int i = 0; i < solutions.Count; i++)
             {
-                Stream currStream = solutions[i];
+                Solution currStream = solutions[i];
                 int routeCount = currStream.routes.Count;
                 for (int j = 0; j < routeCount; j++)
                 {
