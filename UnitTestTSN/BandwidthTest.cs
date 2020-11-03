@@ -16,7 +16,7 @@ namespace UnitTestTSN
         static readonly LinkUtil linkUtil = new LinkUtil();
 
         [ClassInitialize]
-        public static void BeforeClass()
+        public static void BeforeClass(TestContext tc)
         {
             stream0 = new Stream
             {
