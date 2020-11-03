@@ -14,6 +14,5 @@ namespace TSN.Based.Distributed.CPS
         public string dest { get; set; }
         public string src { get; set; }
 
-
     }
 }
