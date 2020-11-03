@@ -77,7 +77,7 @@ namespace UnitTestTSN
                 streamId = "Stream1",
                 source = "ES2",
                 destination = "ES4",
-                size = 10000,
+                size = 1000,
                 period = 1000,
                 deadline = 10000,
                 rl = 2,
@@ -103,10 +103,16 @@ namespace UnitTestTSN
             Link link3 = new Link
             {
                 source = "ES2",
-                destination = "SW0",
+                destination = "SW1",
                 speed = 1.25,
             };
             Link link4 = new Link
+            {
+                source = "SW1",
+                destination = "SW0",
+                speed = 1.25,
+            };
+            Link link5 = new Link
             {
                 source = "SW0",
                 destination = "ES4",
@@ -114,7 +120,7 @@ namespace UnitTestTSN
             };
             Route route2 = new Route
             {
-                links = new List<Link> { link3, link4 },
+                links = new List<Link> { link3, link4, link5 },
                 src = "ES2",
                 dest = "ES4",
             };
