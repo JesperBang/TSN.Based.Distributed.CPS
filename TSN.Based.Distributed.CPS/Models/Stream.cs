@@ -13,4 +13,10 @@ namespace TSN.Based.Distributed.CPS.Models
         public double deadline { get; set; }
         public int rl { get; set; }
     }
+
+    public class Solution
+    {
+        public string StreamId { get; set; }
+        public Route route { get; set; }
+    }
 }
