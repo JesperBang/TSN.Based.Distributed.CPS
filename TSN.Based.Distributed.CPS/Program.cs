@@ -9,15 +9,19 @@ namespace TSN.Based.Distributed.CPS
     {
         static void Main(string[] args)
         {
+            RandomState random = new RandomState();
             PathFinder path = new PathFinder();
             List<Link> links = new List<Link>();
             List<Device> devices = new List<Device>();
             List<Stream> streams = new List<Stream>();
-
             (devices, links, streams) = XmlReader.LoadXml();
 
-            List<Link> l = path.FindPath(streams[0].source, streams[0].destination, 100, links, devices, new List<string>(), new List<Link>());
-            List<Route> ml = path.FindMultiplePaths(streams[0].source, streams[0].destination, 100, links, devices, 3, new List<string>(), new List<Route>());
+            List<Solution> s_best = random.generateState(streams, links, devices);
+
+
+
+            //Route l = path.FindPath(streams[0].source, streams[0].destination, links, devices, new List<string>(), new Route());
+            //List<Route> ml = path.FindMultiplePaths(streams[0].source, streams[0].destination, links, devices, 3, new List<string>(), new List<Route>());
 
             Console.Read();
             
