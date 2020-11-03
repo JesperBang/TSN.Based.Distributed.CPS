@@ -43,7 +43,7 @@ namespace TSN.Based.Distributed.CPS
             {
                 foreach (Link l in item.links)
                 {
-                    double bandwidth_mbits = ((l.speed* 8 * 1000000) / (1000000));
+                    double bandwidth_mbits = l.speed* 8;
                     string link_name = l.source + "_" + l.destination;
                     
                     if (dict.ContainsKey(link_name))
@@ -96,7 +96,7 @@ namespace TSN.Based.Distributed.CPS
                     {
                         foreach (Link l in item.links)
                         {
-                            double bandwidth_mbits = ((l.speed * 8 * 1000000) / (1000000));
+                            double bandwidth_mbits = l.speed * 8 ;
                             string link_name = l.source + "_" + l.destination;
 
                             if (dict.ContainsKey(link_name))
