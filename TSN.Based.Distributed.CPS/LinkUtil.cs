@@ -94,21 +94,24 @@ namespace TSN.Based.Distributed.CPS
                 {
                     foreach (Route item in items)
                     {
-                        foreach (Link l in item.links)
+                        if (item.src == s.source && item.dest == s.destination)
                         {
-                            double bandwidth_mbits = l.speed * 8 ;
-                            string link_name = l.source + "_" + l.destination;
+                            foreach (Link l in item.links)
+                            {
+                                double bandwidth_mbits = l.speed * 8;
+                                string link_name = l.source + "_" + l.destination;
 
-                            if (dict.ContainsKey(link_name))
-                            {
-                                var old_val = dict[link_name][bandwidth_mbits];
-                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
-                                dict[link_name] = temp;
-                            }
-                            else
-                            {
-                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
-                                dict[link_name] = temp;
+                                if (dict.ContainsKey(link_name))
+                                {
+                                    var old_val = dict[link_name][bandwidth_mbits];
+                                    Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
+                                    dict[link_name] = temp;
+                                }
+                                else
+                                {
+                                    Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
+                                    dict[link_name] = temp;
+                                }
                             }
                         }
                     }
