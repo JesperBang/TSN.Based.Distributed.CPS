@@ -1,39 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
 {
     class RandomState
     {
-        /*
-        public List<Stream> generateState(List<Stream> stream, List<Link> links, List<Device> devices)
+
+        public List<Solution> generateState(List<Stream> streams, List<Link> links, List<Device> devices)
         {
-            int num_stream = stream.Count;
+            PathFinder paths = new PathFinder();
+            int num_stream = streams.Count;
             int num_links = links.Count;
             int num_devices = devices.Count;
+            List<Solution> state = new List<Solution>();
 
             //create a List<Stream> random_stream
-              of the same size as the incoming stream
-            Todo here.
-                
-            
-
             //add routes to the streams
-            for (i to num_stream) {
-                //add route to stream, a route includes links
-                random_stream[i] = findPath(stream[i].getSrc(), stream[i].getDst(), links, devices);
-                
-                
-            }
-            
-            
-            return random_stream;
+            for (int i = 0; i < num_stream; i++)
+            {
+                Solution i_state = new Solution { StreamId = streams[i].streamId, Route = new List<Route>(), Cost = 0 };
 
-        */
+
+                i_state.Route.Add(paths.FindPath(streams[i].source, streams[i].destination, links, devices, new List<string>(), new Route()));
+
+                state.Add(i_state);
+            }
+
+            return state;
+
+        }
 
 
     }
-
-
 }

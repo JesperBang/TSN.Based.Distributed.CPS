@@ -17,9 +17,4 @@ namespace TSN.Based.Distributed.CPS.Models
         public double Cost { get; set; }
     }
 
-    public class Solution
-    {
-        public string StreamId { get; set; }
-        public Route route { get; set; }
-    }
 }
