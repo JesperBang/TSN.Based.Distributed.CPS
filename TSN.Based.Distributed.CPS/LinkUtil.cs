@@ -26,9 +26,11 @@ namespace TSN.Based.Distributed.CPS
 
 
         /// <summary>
-        /// checks if the bandwidth of 
+        /// Checks if the bandwidth of 
         /// links are exceeded
         /// and return true if it is.
+        /// This method takes a Stream
+        /// and a list of routes.
         /// </summary>
         /// <param name="s">Stream</param>
         /// <param name="r">List of route objects</param>
@@ -58,6 +60,60 @@ namespace TSN.Based.Distributed.CPS
                 }            
             }
             
+            foreach (var item in dict.Values)
+            {
+                foreach (var d in item)
+                {
+                    if (d.Value > d.Key)
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the bandwidth of 
+        /// links are exceeded
+        /// and return true if it is.
+        /// This method takes a List of Streams
+        /// and a list of lists of routes, since
+        /// each list of route belongs to a Stream.
+        /// </summary>
+        /// <param name="streams"></param>
+        /// <param name="routes"></param>
+        /// <returns></returns>
+        public bool IsBandwidthExceeded(List<Stream> streams, List<List<Route>> routes)
+        {
+            Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
+
+            foreach (Stream s in streams)
+            {
+                double used_bandwidth_mbits = ((s.size * 8) / (1000000)) / (s.period / 1000000);
+
+                foreach (List<Route> items in routes)
+                {
+                    foreach (Route item in items)
+                    {
+                        foreach (Link l in item.links)
+                        {
+                            double bandwidth_mbits = ((l.speed * 8 * 1000000) / (1000000));
+                            string link_name = l.source + "_" + l.destination;
+
+                            if (dict.ContainsKey(link_name))
+                            {
+                                var old_val = dict[link_name][bandwidth_mbits];
+                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
+                                dict[link_name] = temp;
+                            }
+                            else
+                            {
+                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
+                                dict[link_name] = temp;
+                            }
+                        }
+                    }
+                }
+            }
 
             foreach (var item in dict.Values)
             {
@@ -68,11 +124,13 @@ namespace TSN.Based.Distributed.CPS
                 }
             }
             return false;
-
         }
+
     }
 
-
-
-
 }
+
+
+
+
+

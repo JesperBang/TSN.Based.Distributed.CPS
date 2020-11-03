@@ -11,6 +11,7 @@ namespace UnitTestTSN
         static Link link1, link2, link3, link4, link5, link6, link7, link8;
         static List<Route> routes;
         static Stream stream0, stream1, stream2;
+        static List<Stream> streams;
         static Route route1, route2, route3;
         static readonly LinkUtil linkUtil = new LinkUtil();
 
@@ -124,13 +125,15 @@ namespace UnitTestTSN
         };
             
 
-            routes = new List<Route>();      
+            routes = new List<Route>();
+            streams = new List<Stream>();
         }
 
         [TestInitialize]
         public void BeforeTest()
         {
             routes.Clear();
+            streams.Clear();
         }
 
         [TestCleanup]
@@ -150,6 +153,15 @@ namespace UnitTestTSN
 
         [TestMethod]
         public void IsBandwidthExceeded_ReturnsTrue()
+        {
+            routes.Add(route2);
+            routes.Add(route3);
+            var result = linkUtil.IsBandwidthExceeded(stream2, routes);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void IsBandwidthExceeded_AllStreams_ReturnsTrue()
         {
             routes.Add(route2);
             routes.Add(route3);
