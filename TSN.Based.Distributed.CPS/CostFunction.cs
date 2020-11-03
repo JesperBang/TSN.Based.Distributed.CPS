@@ -17,7 +17,7 @@ namespace TSN.Based.Distributed.CPS
             Dictionary<string, int> linkmap = new Dictionary<string, int>();
 
             // bandwidth ok?
-            BandTerm = lu.isBandwidthExceeded(input, input.Route) ? 1 : 0;
+            BandTerm = lu.IsBandwidthExceeded(input, input.Route) ? 1 : 0;
 
             // Overlapping links
             foreach (Route route in input.Route)
