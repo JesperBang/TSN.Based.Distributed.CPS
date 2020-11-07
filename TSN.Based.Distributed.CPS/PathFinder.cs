@@ -22,6 +22,8 @@ namespace TSN.Based.Distributed.CPS
             if (availableLinks.Exists(l => l.destination == dest))
             {
                 usedLinks.links.Add(availableLinks.Find(link => link.destination == dest));
+                usedLinks.src = src;
+                usedLinks.dest = dest;
                 return usedLinks;
             }
             else
@@ -31,6 +33,8 @@ namespace TSN.Based.Distributed.CPS
                 usedLinks.links.Add(availableLinks[r]);
                 visited.Add(availableLinks[r].destination);
                 usedLinks.links.Concat(FindPath(availableLinks[r].destination, dest, links, devices, visited, usedLinks).links);
+                usedLinks.src = src;
+                usedLinks.dest = dest;
             }
             return usedLinks;
         }

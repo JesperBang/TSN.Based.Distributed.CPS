@@ -17,7 +17,9 @@ namespace TSN.Based.Distributed.CPS
             (devices, links, streams) = XmlReader.LoadXml();
 
             List<Solution> s_best = random.generateState(streams, links, devices);
-
+            UpdateFunc up = new UpdateFunc();
+            s_best = up.updateSolution(s_best, links, devices);
+        
 
 
             //Route l = path.FindPath(streams[0].source, streams[0].destination, links, devices, new List<string>(), new Route());
