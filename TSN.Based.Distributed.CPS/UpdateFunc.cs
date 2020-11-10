@@ -26,11 +26,11 @@ namespace TSN.Based.Distributed.CPS
 
             // make new route with the remnants from the old route that should still be used
             Route newRoute = new Route();
-            newRoute.links = currRoutes.links.GetRange(0, currRoutes.links.Count - (currRoutes.links.Count - linkToReplaceFrom));
+            newRoute.links = currRoutes.links.GetRange(0, linkToReplaceFrom);
             
             // call path method with the source of the random link and the destination of the stream
             string src = currRoutes.links[linkToReplaceFrom].source;
-            string dest = solutions[streamRandom].Route[routeRandom].dest;
+            string dest = currStream.dest;
             Route path = pf.FindPath(src, dest, links, devices, new List<string>(), new Route());
 
             // add the newly found path to the route
