@@ -23,6 +23,7 @@ namespace TSN.Based.Distributed.CPS
             }
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
+            settings.OmitXmlDeclaration = true;
             XmlWriter writer = XmlWriter.Create(Path.Combine(Environment.CurrentDirectory, xmlsolution), settings);
 
             writer.WriteStartDocument();

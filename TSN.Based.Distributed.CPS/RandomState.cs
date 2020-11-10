@@ -27,11 +27,19 @@ namespace TSN.Based.Distributed.CPS
                     size = streams[i].size,
                     src = streams[i].source,
                     dest = streams[i].destination,
-                    period = streams[i].period
+                    period = streams[i].period,
+                    rl = streams[i].rl
                 };
 
+                if(i_state.rl > 1)
+                {
+                    i_state.Route = paths.FindMultiplePaths(streams[i].source, streams[i].destination, links, devices, i_state.rl, new List<string>(), new List<Route>());
 
-                i_state.Route.Add(paths.FindPath(streams[i].source, streams[i].destination, links, devices, new List<string>(), new Route()));
+                }
+                else
+                {
+                    i_state.Route.Add(paths.FindPath(streams[i].source, streams[i].destination, links, devices, new List<string>(), new Route()));
+                }
 
                 state.Add(i_state);
             }

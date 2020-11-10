@@ -14,5 +14,6 @@ namespace TSN.Based.Distributed.CPS.Models
         public string src { get; set; }
         public string dest { get; set; }
         public double period { get; set; }
+        public int rl { get; set; }
     }
 }
