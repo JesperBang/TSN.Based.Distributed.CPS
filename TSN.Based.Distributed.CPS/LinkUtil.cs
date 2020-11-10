@@ -129,6 +129,43 @@ namespace TSN.Based.Distributed.CPS
             return false;
         }
 
+        public bool IsBandwidthExceeded(Solution s, List<Route> r)
+        {
+            Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
+            double used_bandwidth_mbits = ((s.size * 8) / (1000000)) / (s.period / 1000000);
+
+            foreach (Route item in r)
+            {
+                foreach (Link l in item.links)
+                {
+                    double bandwidth_mbits = l.speed * 8;
+                    string link_name = l.source + "_" + l.destination;
+
+                    if (dict.ContainsKey(link_name))
+                    {
+                        var old_val = dict[link_name][bandwidth_mbits];
+                        Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
+                        dict[link_name] = temp;
+                    }
+                    else
+                    {
+                        Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
+                        dict[link_name] = temp;
+                    }
+                }
+            }
+
+            foreach (var item in dict.Values)
+            {
+                foreach (var d in item)
+                {
+                    if (d.Value > d.Key)
+                        return true;
+                }
+            }
+            return false;
+        }
+
     }
 
 }

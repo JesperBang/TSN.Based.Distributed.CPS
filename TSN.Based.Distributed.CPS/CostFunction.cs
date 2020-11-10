@@ -7,12 +7,14 @@ namespace TSN.Based.Distributed.CPS
 {
     public class CostFunction
     {
-        public Stream CalcCostFunction(Stream input) 
+        public double CalcCostFunction(Solution input) 
         {
             LinkUtil lu = new LinkUtil();
+            double totalCost = 0;
             int BandTerm;
             int OverlapTerm;
             double LenTerm = 0;
+            
 
             Dictionary<string, int> linkmap = new Dictionary<string, int>();
 
@@ -27,7 +29,7 @@ namespace TSN.Based.Distributed.CPS
                     if (linkmap.ContainsKey(link.source + link.destination)) linkmap[link.source + link.destination] += 1;
                     if (!linkmap.ContainsKey(link.source + link.destination)) linkmap.Add(link.source + link.destination, 1);    
                 }
-                LenTerm = route.links.Count;
+                LenTerm += route.links.Count;
             }
 
             OverlapTerm = linkmap.Where(links => links.Value > 1).Count();
@@ -35,8 +37,10 @@ namespace TSN.Based.Distributed.CPS
             // Average length of routes
             LenTerm = LenTerm / input.Route.Count();
 
-            input.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm);
-            return input;
+            totalCost = CostCalc(BandTerm, OverlapTerm, LenTerm);
+            input.Cost = totalCost;
+
+            return totalCost;
         }
 
         public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm)
