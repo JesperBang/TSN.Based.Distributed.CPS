@@ -10,7 +10,7 @@ namespace TSN.Based.Distributed.CPS.Models
 
         public List<Route> Route { get; set; }
         public double Cost { get; set; }
-        public int size { get; set;}
+        public double size { get; set;}
         public string src { get; set; }
         public string dest { get; set; }
         public double period { get; set; }

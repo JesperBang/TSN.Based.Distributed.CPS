@@ -12,21 +12,18 @@ namespace TSN.Based.Distributed.CPS
 
         // file of jobs
 
-        public static (List<Device>, List<Link>, List<Stream>) LoadXml()
+        public static (List<Device>, List<Link>, List<Stream>) LoadXml(int xml)
         {
             string xmlfile = "TC0_example.app_network_description";
-            //switch (xml)
-            //{
-            //    case 1:
-            //        xmlfile = "small.xml";
-            //        break;
-            //    case 2:
-            //        xmlfile = "medium.xml";
-            //        break;
-            //    case 3:
-            //        xmlfile = "large.xml";
-            //        break;
-            //}
+            switch (xml)
+            {
+                case 1:
+                    xmlfile = "TC0_example.app_network_description";
+                    break;
+                case 2:
+                    xmlfile = "TC3_medium.app_network_description";
+                    break;
+            }
 
             string filename = "../../../inputs/" + xmlfile;
             List<Device> devices = new List<Device>();

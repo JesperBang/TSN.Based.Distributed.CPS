@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
@@ -27,7 +26,7 @@ namespace TSN.Based.Distributed.CPS
             // make new route with the remnants from the old route that should still be used
             Route newRoute = new Route();
             newRoute.links = currRoutes.links.GetRange(0, linkToReplaceFrom);
-            
+
             // call path method with the source of the random link and the destination of the stream
             string src = currRoutes.links[linkToReplaceFrom].source;
             string dest = currStream.dest;
@@ -41,16 +40,6 @@ namespace TSN.Based.Distributed.CPS
 
             return solutions;
         }
-
-
-
-
-
-
-
-
-
-
 
     }
 }

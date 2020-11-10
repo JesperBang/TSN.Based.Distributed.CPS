@@ -1,28 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Resources;
-using System.Text;
 using System.Xml;
+using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
 {
     public class XMLWriter
     {
-        public static void To_XML(String s, double laxity, int xml)
+        public static void To_XML(List<Solution> sl, double cost, int xml)
         {
 
-            string xmlsolution = "solution_small.xml";
+            string xmlsolution = "TC0_small.solution";
             switch (xml)
             {
                 case 1:
-                    xmlsolution = "solution_small.xml";
+                    xmlsolution = "TC0_small.solution";
                     break;
                 case 2:
-                    xmlsolution = "solution_medium.xml";
-                    break;
-                case 3:
-                    xmlsolution = "solution_large.xml";
+                    xmlsolution = "TC0_medium.solution";
                     break;
             }
             XmlWriterSettings settings = new XmlWriterSettings();
@@ -31,21 +27,28 @@ namespace TSN.Based.Distributed.CPS
 
             writer.WriteStartDocument();
             writer.WriteStartElement("solution");
-            foreach(Char c in s)
-            { /*
-                foreach(char t in s
+            writer.WriteAttributeString("tc_name", xmlsolution.Split(".")[0]);
+            foreach (Solution s in sl)
+            {
+                writer.WriteStartElement("stream");
+                writer.WriteAttributeString("id", s.StreamId);
+
+                foreach (Route r in s.Route)
                 {
-                writer.WriteStartElement("Task");
-                writer.WriteAttributeString("Id", s.Id.ToString());
-                writer.WriteAttributeString("MCP", c.MCPId.ToString());
-                writer.WriteAttributeString("Core", c.CoreId.ToString());
-                writer.WriteAttributeString("WCRT", Math.Round(t.WCET * c.WCETFactor).ToString());
-                writer.WriteEndElement();
+                    writer.WriteStartElement("route");
+                    foreach (Link l in r.links)
+                    {
+                        writer.WriteStartElement("link");
+                        writer.WriteAttributeString("src", l.source);
+                        writer.WriteAttributeString("dest", l.destination);
+                        writer.WriteEndElement();
+                    }
+                    writer.WriteEndElement();
                 }
-                */
+                writer.WriteEndElement();
             }
             writer.WriteEndElement();
-            writer.WriteComment("Total Laxity: " + Math.Round(laxity).ToString());
+            writer.WriteComment("Total cost: " + cost.ToString());
             writer.WriteEndDocument();
             writer.Flush();
             writer.Close();

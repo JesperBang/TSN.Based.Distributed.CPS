@@ -51,8 +51,7 @@ namespace UnitTestTSN
                 dest = "ES3",
             };
 
-            cf.CalcCostFunction(stream);
-            Console.WriteLine(cf.CalcCostFunction(stream));
+
 
         }
 

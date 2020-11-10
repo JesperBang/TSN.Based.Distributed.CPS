@@ -19,7 +19,16 @@ namespace TSN.Based.Distributed.CPS
             //add routes to the streams
             for (int i = 0; i < num_stream; i++)
             {
-                Solution i_state = new Solution { StreamId = streams[i].streamId, Route = new List<Route>(), Cost = 0 };
+                Solution i_state = new Solution
+                {
+                    StreamId = streams[i].streamId,
+                    Route = new List<Route>(),
+                    Cost = 0,
+                    size = streams[i].size,
+                    src = streams[i].source,
+                    dest = streams[i].destination,
+                    period = streams[i].period
+                };
 
 
                 i_state.Route.Add(paths.FindPath(streams[i].source, streams[i].destination, links, devices, new List<string>(), new Route()));
