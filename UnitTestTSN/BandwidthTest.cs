@@ -429,8 +429,136 @@ namespace UnitTestTSN
         [TestMethod]
         public void IsScheduable_ReturnsTrue()
         {
-            Stream stream = new Stream
+            List<Stream> streams = new List<Stream> {
+                new Stream
+                {
+                streamId = "Stream0",
+                source = "ES1",
+                destination = "ES3",
+                size = 100,
+                period = 100000,
+                deadline = 10000,
+                rl = 1,
+                },
+                new Stream
+                {
+                streamId = "Stream1",
+                source = "ES2",
+                destination = "ES4",
+                size = 1000,
+                period = 10000,
+                deadline = 10000,
+                rl = 2,
+                }
+        };
+
+            List<List<Route>> routes = new List<List<Route>>
             {
+                new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                },
+                new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                }
+            };
+
+            var result = linkUtil.IsScheduable(streams, routes);
+            Assert.IsTrue(result);
+        }
+
+
+        [TestMethod]
+        public void IsScheduable_ReturnsFalse()
+        {
+            List<Stream> streams = new List<Stream> {
+                new Stream
+                {
+                streamId = "Stream0",
+                source = "ES1",
+                destination = "ES3",
+                size = 100,
+                period = 1000,
+                deadline = 10000,
+                rl = 1,
+                },
+                new Stream
+                {
                 streamId = "Stream1",
                 source = "ES2",
                 destination = "ES4",
@@ -438,10 +566,35 @@ namespace UnitTestTSN
                 period = 1000,
                 deadline = 10000,
                 rl = 2,
-            };
-            Route route = new Route
+                }
+        };
+
+            List<List<Route>> routes = new List<List<Route>>
             {
-                links = new List<Link> {
+                new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
                             new Link
                             {
                                 source = "ES2",
@@ -455,31 +608,34 @@ namespace UnitTestTSN
                                 speed = 1.25,
                             }
                         },
-                src = "ES2",
-                dest = "ES4",
-            };
-
-            var hops = linkUtil.FindHops(route);
-            var result = linkUtil.IsScheduable(stream, route.links[0].speed, hops);
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public void IsScheduable_ReturnsFalse()
-        {
-            Stream stream = new Stream
-            {
-                streamId = "Stream1",
-                source = "ES2",
-                destination = "ES4",
-                size = 1000,
-                period = 1000,
-                deadline = 100,
-                rl = 2,
-            };
-            Route route = new Route
-            {
-                links = new List<Link> {
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                },
+                new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
                             new Link
                             {
                                 source = "ES2",
@@ -493,12 +649,13 @@ namespace UnitTestTSN
                                 speed = 1.25,
                             }
                         },
-                src = "ES2",
-                dest = "ES4",
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                }
             };
 
-            var hops = linkUtil.FindHops(route);
-            var result = linkUtil.IsScheduable(stream, route.links[0].speed, hops);
+            var result = linkUtil.IsScheduable(streams, routes);
             Assert.IsFalse(result);
         }
     }
