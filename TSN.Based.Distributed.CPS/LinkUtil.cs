@@ -11,6 +11,25 @@ namespace TSN.Based.Distributed.CPS
             
         }
 
+        /* WCD = (h + 1) * C
+         * C = size / link_speed
+         * 
+         */
+
+
+        public bool IsScheduable(Stream stream, Link link, int hops)
+        {
+            double cycle_time = stream.size / link.speed;
+            double wcd = (hops + 1) * cycle_time;
+
+            if (stream.deadline >= wcd)
+                return true;
+            else 
+                return false;
+        }
+
+
+
         /*
          * (1.25 B/us = 10 Mbit/s).
          * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
