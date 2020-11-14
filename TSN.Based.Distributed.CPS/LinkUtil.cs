@@ -22,18 +22,39 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="link">Link</param>
         /// <param name="hops">Hops</param>
         /// <returns></returns>
-        public bool IsScheduable(Stream stream, double linkSpeed, int hops)
+        public bool IsScheduable(List<Stream> streams, List<List<Route>> routes)
         {
-            double linkSpeed_bit_per_s = linkSpeed * 8000000;
-            double size_bit = stream.size * 8;
-            double deadline_s = stream.deadline / 1000000;
+            double cycle_time = 0.0;
+            double smallest_period = 0.0;
 
-            double cycle_time = size_bit / linkSpeed_bit_per_s;
-            double wcd = (hops + 1) * cycle_time;
+            foreach (Stream stream in streams)
+            {
+                double size_bit = stream.size * 8;
+                double period_s = stream.period / 1000000;
+                if (smallest_period == 0.0)
+                    smallest_period = period_s;
+                if (smallest_period > period_s)
+                    smallest_period = period_s;
 
-            if ( deadline_s >= wcd)
+                foreach (List<Route> item in routes)
+                {
+                    foreach (Route route in item)
+                    {
+                        if (route.src == stream.source && route.dest == stream.destination)
+                        {
+                            foreach (Link link in route.links)
+                            {
+                                double linkSpeed_bit_per_s = link.speed * 8000000;
+                                cycle_time += size_bit / linkSpeed_bit_per_s;
+                            }
+                        }       
+                    }
+                }
+            }
+
+            if (cycle_time <= smallest_period)
                 return true;
-            else 
+            else
                 return false;
         }
 
