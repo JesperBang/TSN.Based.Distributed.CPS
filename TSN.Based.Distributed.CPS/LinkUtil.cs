@@ -22,12 +22,16 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="link">Link</param>
         /// <param name="hops">Hops</param>
         /// <returns></returns>
-        public bool IsScheduable(Stream stream, Link link, int hops)
+        public bool IsScheduable(Stream stream, double linkSpeed, int hops)
         {
-            double cycle_time = stream.size / link.speed;
+            double linkSpeed_bit_per_s = linkSpeed * 8000000;
+            double size_bit = stream.size * 8;
+            double deadline_s = stream.deadline / 1000000;
+
+            double cycle_time = size_bit / linkSpeed_bit_per_s;
             double wcd = (hops + 1) * cycle_time;
 
-            if (stream.deadline >= wcd)
+            if ( deadline_s >= wcd)
                 return true;
             else 
                 return false;
