@@ -358,5 +358,148 @@ namespace UnitTestTSN
             var result = linkUtil.IsBandwidthExceeded(streams, routes);
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void FindHops_ReturnsTrue()
+        {
+            Route route = new Route
+            {
+                links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "ES4",
+                                destination = "SW2",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW2",
+                                destination = "ES7",
+                                speed = 1.25,
+                            }
+
+                        },
+                src = "ES2",
+                dest = "ES7",
+            };
+
+            var result = linkUtil.FindHops(route);
+            Assert.AreEqual(2, result);
+        }
+
+        [TestMethod]
+        public void FindHops_ReturnsFalse()
+        {
+            Route route = new Route
+            {
+                links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                src = "ES2",
+                dest = "ES4",
+            };
+
+            var result = linkUtil.FindHops(route);
+            Assert.AreNotEqual(2, result);
+        }
+
+        [TestMethod]
+        public void IsScheduable_ReturnsTrue()
+        {
+            Stream stream = new Stream
+            {
+                streamId = "Stream1",
+                source = "ES2",
+                destination = "ES4",
+                size = 1000,
+                period = 1000,
+                deadline = 10000,
+                rl = 2,
+            };
+            Route route = new Route
+            {
+                links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                src = "ES2",
+                dest = "ES4",
+            };
+
+            var hops = linkUtil.FindHops(route);
+            var result = linkUtil.IsScheduable(stream, route.links[0].speed, hops);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void IsScheduable_ReturnsFalse()
+        {
+            Stream stream = new Stream
+            {
+                streamId = "Stream1",
+                source = "ES2",
+                destination = "ES4",
+                size = 1000,
+                period = 1000,
+                deadline = 100,
+                rl = 2,
+            };
+            Route route = new Route
+            {
+                links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                src = "ES2",
+                dest = "ES4",
+            };
+
+            var hops = linkUtil.FindHops(route);
+            var result = linkUtil.IsScheduable(stream, route.links[0].speed, hops);
+            Assert.IsFalse(result);
+        }
     }
 }

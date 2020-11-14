@@ -11,6 +11,55 @@ namespace TSN.Based.Distributed.CPS
             
         }
 
+        /// <summary>
+        /// Checks if stream is scheduable according
+        /// to cyclic queuing and forwarding.
+        /// Used formulas:
+        /// WCD = (h + 1) * C
+        /// C = size / link_speed
+        /// </summary>
+        /// <param name="stream">Stream</param>
+        /// <param name="link">Link</param>
+        /// <param name="hops">Hops</param>
+        /// <returns></returns>
+        public bool IsScheduable(Stream stream, double linkSpeed, int hops)
+        {
+            double linkSpeed_bit_per_s = linkSpeed * 8000000;
+            double size_bit = stream.size * 8;
+            double deadline_s = stream.deadline / 1000000;
+
+            double cycle_time = size_bit / linkSpeed_bit_per_s;
+            double wcd = (hops + 1) * cycle_time;
+
+            if ( deadline_s >= wcd)
+                return true;
+            else 
+                return false;
+        }
+
+        /// <summary>
+        /// Find amount of hops 
+        /// given a route.
+        /// </summary>
+        /// <param name="route">Route</param>
+        /// <returns></returns>
+        public int FindHops(Route route)
+        {
+            int count = 0;
+
+            foreach (Link link in route.links)
+            {
+                if (link.destination.Contains("SW"))
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+
+
         /*
          * (1.25 B/us = 10 Mbit/s).
          * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
@@ -79,8 +128,8 @@ namespace TSN.Based.Distributed.CPS
         /// and a list of lists of routes, since
         /// each list of route belongs to a Stream.
         /// </summary>
-        /// <param name="streams"></param>
-        /// <param name="routes"></param>
+        /// <param name="streams">List of Stream</param>
+        /// <param name="routes">List of lists of routes</param>
         /// <returns></returns>
         public bool IsBandwidthExceeded(List<Stream> streams, List<List<Route>> routes)
         {
