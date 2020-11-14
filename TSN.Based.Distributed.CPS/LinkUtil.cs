@@ -11,12 +11,17 @@ namespace TSN.Based.Distributed.CPS
             
         }
 
-        /* WCD = (h + 1) * C
-         * C = size / link_speed
-         * 
-         */
-
-
+        /// <summary>
+        /// Checks if stream is scheduable according
+        /// to cyclic queuing and forwarding.
+        /// Used formulas:
+        /// WCD = (h + 1) * C
+        /// C = size / link_speed
+        /// </summary>
+        /// <param name="stream">Stream</param>
+        /// <param name="link">Link</param>
+        /// <param name="hops">Hops</param>
+        /// <returns></returns>
         public bool IsScheduable(Stream stream, Link link, int hops)
         {
             double cycle_time = stream.size / link.speed;
@@ -26,6 +31,27 @@ namespace TSN.Based.Distributed.CPS
                 return true;
             else 
                 return false;
+        }
+
+        /// <summary>
+        /// Find amount of hops 
+        /// given a route.
+        /// </summary>
+        /// <param name="route">Route</param>
+        /// <returns></returns>
+        public int FindHops(Route route)
+        {
+            int count = 0;
+
+            foreach (Link link in route.links)
+            {
+                if (link.destination.Contains("SW"))
+                {
+                    count++;
+                }
+            }
+
+            return count;
         }
 
 
@@ -98,8 +124,8 @@ namespace TSN.Based.Distributed.CPS
         /// and a list of lists of routes, since
         /// each list of route belongs to a Stream.
         /// </summary>
-        /// <param name="streams"></param>
-        /// <param name="routes"></param>
+        /// <param name="streams">List of Stream</param>
+        /// <param name="routes">List of lists of routes</param>
         /// <returns></returns>
         public bool IsBandwidthExceeded(List<Stream> streams, List<List<Route>> routes)
         {
