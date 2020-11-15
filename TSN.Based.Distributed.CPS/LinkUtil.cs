@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
@@ -63,7 +62,7 @@ namespace TSN.Based.Distributed.CPS
         /// given a route.
         /// </summary>
         /// <param name="route">Route</param>
-        /// <returns></returns>
+        /// <returns>hop counts</returns>
         public int FindHops(Route route)
         {
             int count = 0;
@@ -79,8 +78,6 @@ namespace TSN.Based.Distributed.CPS
             return count;
         }
 
-
-
         /*
          * (1.25 B/us = 10 Mbit/s).
          * Et link fra dets src til dst er eks. 10 Mbit/s = 10.000.000 bit/s. = 1.250.000 Bytes/s
@@ -93,7 +90,6 @@ namespace TSN.Based.Distributed.CPS
          * Man tjekker alle links i en route, hvis der findes flere links i forskellige routes der benytter den samme link, skal de ligges sammen ved 
          * beregningen af den brugte bandtwidth. Hvis den brugte bandwidth ikke overskrider speed eks. 10 Mbit/s, retuneres false.  
          */
-
 
         /// <summary>
         /// Checks if the bandwidth of 
@@ -235,12 +231,5 @@ namespace TSN.Based.Distributed.CPS
             }
             return false;
         }
-
     }
-
 }
-
-
-
-
-
