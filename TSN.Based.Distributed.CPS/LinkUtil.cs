@@ -26,9 +26,11 @@ namespace TSN.Based.Distributed.CPS
             double cycle_time = 0.0;
             double smallest_period = 0.0;
 
+            //build up cycle_time and and save the smallest_period of streams
             foreach (Stream stream in streams)
             {
                 double size_bit = stream.size * 8;
+                double deadline_s = stream.deadline / 1000000;
                 double period_s = stream.period / 1000000;
                 if (smallest_period == 0.0)
                     smallest_period = period_s;
@@ -51,6 +53,33 @@ namespace TSN.Based.Distributed.CPS
                 }
             }
 
+            /*check each stream if their wcd is greater than deadline.
+             * if so, return false.
+             */
+            foreach (Stream stream in streams)
+            {
+                double deadline_s = stream.deadline / 1000000;
+                foreach (List<Route> item in routes)
+                {
+                    foreach (Route route in item)
+                    {
+                        if (route.src == stream.source && route.dest == stream.destination)
+                        {
+                            int hops = FindHops(route);
+                            double wcd = (hops + 1) * cycle_time;
+                            if (wcd > deadline_s)
+                                return false;
+                        }
+                    }
+                }
+
+
+            }
+
+            /*also check if cycle time is greater
+             * than the smallest period among all streams.
+             * if so, return false.
+             */
             if (cycle_time <= smallest_period)
                 return true;
             else
