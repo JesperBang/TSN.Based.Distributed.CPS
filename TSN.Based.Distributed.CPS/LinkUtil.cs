@@ -22,7 +22,75 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="link">Link</param>
         /// <param name="hops">Hops</param>
         /// <returns></returns>
-        public bool IsScheduable(List<Stream> streams, List<List<Route>> routes)
+        public bool IsScheduable(Stream stream)
+        {
+            Dictionary<string, double> dict = new Dictionary<string, double>();
+            double size_bit = stream.size * 8;
+            double deadline_s = stream.deadline / 1000000;
+            double period_s = stream.period / 1000000;
+            double smallest_period = period_s;
+            double cycle_time_max = 0.0;
+
+            //build up cycle_time and and save the smallest_period of streams
+            foreach (Route route in stream.Route)
+            {
+                if (route.src == stream.source && route.dest == stream.destination)
+                {
+                    foreach (Link link in route.links)
+                    {
+                        string link_name = link.source + "_" + link.destination;
+                        double linkSpeed_bit_per_s = link.speed * 8000000;
+                        double cycle_time = size_bit / linkSpeed_bit_per_s;
+
+                        if (dict.ContainsKey(link_name))
+                        {
+                            dict[link_name] += cycle_time;
+                        }
+                        else
+                        {
+                            dict[link_name] = cycle_time;
+                        }
+                    }
+                }
+            }
+            cycle_time_max = dict.Values.Max();
+
+            /*check each stream if their wcd is greater than deadline.
+             * if so, return false.
+             */
+            foreach (Route route in stream.Route)
+            {
+                if (route.src == stream.source && route.dest == stream.destination)
+                {
+                    int hops = FindHops(route);
+                    double wcd = (hops + 1) * cycle_time_max;
+                    if (wcd > deadline_s)
+                        return false;
+                }
+            }
+
+            /*also check if cycle time is greater
+             * than the smallest period among all streams.
+             * if so, return false.
+             */
+            if (cycle_time_max <= smallest_period)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Checks if stream is scheduable according
+        /// to cyclic queuing and forwarding.
+        /// Used formulas:
+        /// WCD = (h + 1) * C
+        /// C = size / link_speed
+        /// </summary>
+        /// <param name="stream">Stream</param>
+        /// <param name="link">Link</param>
+        /// <param name="hops">Hops</param>
+        /// <returns></returns>
+        public bool IsScheduable(List<Stream> streams)
         {
             Dictionary<string, double> dict = new Dictionary<string, double>();
             double smallest_period = 0.0;
@@ -40,32 +108,29 @@ namespace TSN.Based.Distributed.CPS
                 if (smallest_period > period_s)
                     smallest_period = period_s;
 
-                foreach (List<Route> item in routes)
-                {
-                    foreach (Route route in item)
-                    {
-                        if (route.src == stream.source && route.dest == stream.destination)
-                        {
-                            foreach (Link link in route.links)
-                            {
-                                string link_name = link.source + "_" + link.destination;
-                                double linkSpeed_bit_per_s = link.speed * 8000000;
-                                double cycle_time = size_bit / linkSpeed_bit_per_s;
 
-                                if (dict.ContainsKey(link_name))
-                                {
-                                    dict[link_name] += cycle_time;
-                                }
-                                else
-                                {
-                                    dict[link_name] = cycle_time;
-                                }
+                foreach (Route route in stream.Route)
+                {
+                    if (route.src == stream.source && route.dest == stream.destination)
+                    {
+                        foreach (Link link in route.links)
+                        {
+                            string link_name = link.source + "_" + link.destination;
+                            double linkSpeed_bit_per_s = link.speed * 8000000;
+                            double cycle_time = size_bit / linkSpeed_bit_per_s;
+
+                            if (dict.ContainsKey(link_name))
+                            {
+                                dict[link_name] += cycle_time;
+                            }
+                            else
+                            {
+                                dict[link_name] = cycle_time;
                             }
                         }
                     }
-                }
+                }        
             }
-
             cycle_time_max = dict.Values.Max();
 
             /*check each stream if their wcd is greater than deadline.
@@ -74,17 +139,15 @@ namespace TSN.Based.Distributed.CPS
             foreach (Stream stream in streams)
             {
                 double deadline_s = stream.deadline / 1000000;
-                foreach (List<Route> item in routes)
+
+                foreach (Route route in stream.Route)
                 {
-                    foreach (Route route in item)
+                    if (route.src == stream.source && route.dest == stream.destination)
                     {
-                        if (route.src == stream.source && route.dest == stream.destination)
-                        {
-                            int hops = FindHops(route);
-                            double wcd = (hops + 1) * cycle_time_max;
-                            if (wcd > deadline_s)
-                                return false;
-                        }
+                        int hops = FindHops(route);
+                        double wcd = (hops + 1) * cycle_time_max;
+                        if (wcd > deadline_s)
+                            return false;
                     }
                 }
             }
@@ -107,17 +170,7 @@ namespace TSN.Based.Distributed.CPS
         /// <returns>hop counts</returns>
         public int FindHops(Route route)
         {
-            int count = 0;
-
-            foreach (Link link in route.links)
-            {
-                if (link.destination.Contains("SW"))
-                {
-                    count++;
-                }
-            }
-
-            return count;
+            return route.links.Count;
         }
 
         /*

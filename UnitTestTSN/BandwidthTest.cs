@@ -538,7 +538,7 @@ namespace UnitTestTSN
                 }
             };
 
-            var result = linkUtil.IsScheduable(streams, routes);
+            var result = linkUtil.IsScheduable(streams);
             Assert.IsTrue(result);
         }
 
@@ -655,7 +655,7 @@ namespace UnitTestTSN
                 }
             };
 
-            var result = linkUtil.IsScheduable(streams, routes);
+            var result = linkUtil.IsScheduable(streams);
             Assert.IsFalse(result);
         }
     }
