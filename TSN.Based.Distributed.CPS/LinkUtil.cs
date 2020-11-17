@@ -195,12 +195,12 @@ namespace TSN.Based.Distributed.CPS
         /// </summary>
         /// <param name="s">Stream</param>
         /// <param name="r">List of route objects</param>
-        public bool IsBandwidthExceeded(Stream s, List<Route> r)
+        public bool IsBandwidthExceeded(Stream stream)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
-            double used_bandwidth_mbits = ((s.size * 8)/ (1000000)) / (s.period/1000000);
+            double used_bandwidth_mbits = ((stream.size * 8)/ (1000000)) / (stream.period/1000000);
 
-            foreach (Route item in r)
+            foreach (Route item in stream.Route)
             {
                 foreach (Link l in item.links)
                 {
@@ -243,36 +243,33 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="streams">List of Stream</param>
         /// <param name="routes">List of lists of routes</param>
         /// <returns></returns>
-        public bool IsBandwidthExceeded(List<Stream> streams, List<List<Route>> routes)
+        public bool IsBandwidthExceeded(List<Stream> streams)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
 
-            foreach (Stream s in streams)
+            foreach (Stream stream in streams)
             {
-                double used_bandwidth_mbits = ((s.size * 8) / (1000000)) / (s.period / 1000000);
+                double used_bandwidth_mbits = ((stream.size * 8) / (1000000)) / (stream .period / 1000000);
 
-                foreach (List<Route> items in routes)
+                foreach (Route item in stream.Route)
                 {
-                    foreach (Route item in items)
+                    if (item.src == stream.source && item.dest == stream.destination)
                     {
-                        if (item.src == s.source && item.dest == s.destination)
+                        foreach (Link l in item.links)
                         {
-                            foreach (Link l in item.links)
-                            {
-                                double bandwidth_mbits = l.speed * 8;
-                                string link_name = l.source + "_" + l.destination;
+                            double bandwidth_mbits = l.speed * 8;
+                            string link_name = l.source + "_" + l.destination;
 
-                                if (dict.ContainsKey(link_name))
-                                {
-                                    var old_val = dict[link_name][bandwidth_mbits];
-                                    Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
-                                    dict[link_name] = temp;
-                                }
-                                else
-                                {
-                                    Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
-                                    dict[link_name] = temp;
-                                }
+                            if (dict.ContainsKey(link_name))
+                            {
+                                var old_val = dict[link_name][bandwidth_mbits];
+                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
+                                dict[link_name] = temp;
+                            }
+                            else
+                            {
+                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
+                                dict[link_name] = temp;
                             }
                         }
                     }
@@ -290,12 +287,12 @@ namespace TSN.Based.Distributed.CPS
             return false;
         }
 
-        public bool IsBandwidthExceeded(Solution s, List<Route> r)
+        public bool IsBandwidthExceeded(Solution solution)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
-            double used_bandwidth_mbits = ((s.size * 8) / (1000000)) / (s.period / 1000000);
+            double used_bandwidth_mbits = ((solution.size * 8) / (1000000)) / (solution.period / 1000000);
 
-            foreach (Route item in r)
+            foreach (Route item in solution.Route)
             {
                 foreach (Link l in item.links)
                 {

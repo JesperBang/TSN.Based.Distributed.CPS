@@ -26,7 +26,7 @@ namespace TSN.Based.Distributed.CPS
                 Dictionary<string, int> linkmap = new Dictionary<string, int>();
 
                 // Use LinkUtil to test bandwidth
-                BandTerm = lu.IsBandwidthExceeded(sol, sol.Route) ? 1 : 0;
+                BandTerm = lu.IsBandwidthExceeded(sol) ? 1 : 0;
 
                 // Overlapping links
                 foreach (Route route in sol.Route)
