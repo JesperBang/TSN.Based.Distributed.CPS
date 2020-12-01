@@ -30,15 +30,19 @@ namespace TSN.Based.Distributed.CPS
                     period = streams[i].period,
                     rl = streams[i].rl
                 };
+                Dictionary<string, int> v = new Dictionary<string, int>();
+                for (int j = 0; j < i_state.rl; j++)
+                    {
+                    if (i_state.Route.Count < i_state.rl) { 
+                        for (int r = 0; r < i_state.rl; r++)
+                        {
+                            i_state.Route.Add(new Route());
+                        }
+                    }
+                    bool test = true;
+                    //(i_state.Route[j], v) = (paths.FindPath(streams[i].source, streams[i].destination, links, devices, j, v, i_state.Route[j], 1));
+                    (i_state.Route, test) = (paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true));
 
-                if(i_state.rl > 1)
-                {
-                    i_state.Route = paths.FindMultiplePaths(streams[i].source, streams[i].destination, links, devices, i_state.rl, new List<string>(), new List<Route>());
-
-                }
-                else
-                {
-                    i_state.Route.Add(paths.FindPath(streams[i].source, streams[i].destination, links, devices, new List<string>(), new Route()));
                 }
 
                 state.Add(i_state);
@@ -47,7 +51,5 @@ namespace TSN.Based.Distributed.CPS
             return state;
 
         }
-
-
     }
 }

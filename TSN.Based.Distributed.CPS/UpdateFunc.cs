@@ -13,7 +13,7 @@ namespace TSN.Based.Distributed.CPS
             Random rnd = new Random();
             // find random stream
             int streamRandom = rnd.Next(0, solutions.Count);
-            Solution currStream = solutions[1];
+            Solution currStream = solutions[streamRandom];
             // find random route for the specific stream
             int routeCount = currStream.Route.Count;
             int routeRandom = rnd.Next(0, routeCount);
@@ -29,34 +29,35 @@ namespace TSN.Based.Distributed.CPS
             string src = currRoutes.links[linkToReplaceFrom].source;
             string dest = currStream.dest;
 
-            if (currStream.rl > 1) {
-                List<string> visited = new List<string>();
-                currStream.Route.RemoveAt(routeRandom);
-                foreach(Route r in currStream.Route)
-                {
-                    foreach (Link l in r.links)
-                    {
-                        if (l.source != currStream.dest)
-                        {
-                            visited.Add(l.source);
-                        }
-                    }
-                }
-                List<Route> path = pf.FindMultiplePaths(src, dest, links, devices, 1, visited, new List<Route>());
-                currStream.Route.Add(path[0]);
-                solutions[streamRandom].Route = currStream.Route;
-            }
-            else
-            {               
-                Route path = pf.FindPath(src, dest, links, devices, new List<string>(), new Route());
+            //if (currStream.rl > 1) {
+            //    List<string> visited = new List<string>();
+            //    currStream.Route.RemoveAt(routeRandom);
+            //    foreach(Route r in currStream.Route)
+            //    {
+            //        foreach (Link l in r.links)
+            //        {
+            //            if (l.source != currStream.dest)
+            //            {
+            //                visited.Add(l.source);
+            //            }
+            //        }
+            //    }
+            //    List<Route> path = pf.FindPath(src, dest, links, devices, 1, visited, new List<Route>(), src, dest);
+            //    newRoute.links.AddRange(path[0].links);
+            //    currStream.Route.Add(newRoute);
+            //    solutions[streamRandom].Route = currStream.Route;
+            //}
+            //else
+            //{               
+            //    List<Route> path = pf.FindPath(src, dest, links, devices, 1, new List<string>(), new List<Route>(), src, dest);
 
-                // add the newly found path to the route
-                newRoute.links.AddRange(path.links);
+            //    // add the newly found path to the route
+            //    newRoute.links.AddRange(path[0].links);
 
-                // remove old route and add new to solution
-                solutions[streamRandom].Route[routeRandom] = newRoute;
+            //    // remove old route and add new to solution
+            //    solutions[streamRandom].Route[routeRandom] = newRoute;
 
-            }
+            //}
 
 
             return solutions;

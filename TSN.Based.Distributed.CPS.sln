@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TSN.Based.Distributed.CPS", "TSN.Based.Distributed.CPS\TSN.Based.Distributed.CPS.csproj", "{F91F033A-3B39-4C7D-9A92-B17415FE7720}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestTSN", "UnitTestTSN\UnitTestTSN.csproj", "{191567FC-FE1D-4EC6-A066-DC39E1922AF3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{F91F033A-3B39-4C7D-9A92-B17415FE7720}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F91F033A-3B39-4C7D-9A92-B17415FE7720}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F91F033A-3B39-4C7D-9A92-B17415FE7720}.Release|Any CPU.Build.0 = Release|Any CPU
-		{191567FC-FE1D-4EC6-A066-DC39E1922AF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{191567FC-FE1D-4EC6-A066-DC39E1922AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{191567FC-FE1D-4EC6-A066-DC39E1922AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{191567FC-FE1D-4EC6-A066-DC39E1922AF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
