@@ -145,7 +145,7 @@ namespace TSN.Based.Distributed.CPS
                     if (route.src == stream.source && route.dest == stream.destination)
                     {
                         int hops = FindHops(route);
-                        double wcd = (hops + 1) * cycle_time_max;
+                        double wcd = (hops) * cycle_time_max;
                         if (wcd > deadline_s)
                             return false;
                     }
@@ -170,7 +170,14 @@ namespace TSN.Based.Distributed.CPS
         /// <returns>hop counts</returns>
         public int FindHops(Route route)
         {
-            return route.links.Count;
+            int hops = 0;
+            foreach (Link link in route.links)
+            {
+                if (link.destination.Contains("SW"))
+                    hops += 1;
+            }
+            return hops;
+            
         }
 
         /*
