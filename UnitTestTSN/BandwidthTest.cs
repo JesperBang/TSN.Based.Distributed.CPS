@@ -363,7 +363,7 @@ namespace UnitTestTSN
             };
 
             var result = linkUtil.FindHops(route);
-            Assert.AreEqual(4, result);
+            Assert.AreEqual(2, result);
         }
 
         [TestMethod]
