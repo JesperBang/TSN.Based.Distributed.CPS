@@ -110,103 +110,6 @@ namespace TSN.Based.Distributed.CPS
             return Tuple.Create(usedLinks, visited);
         }
 
-        //public Dictionary<string, string> FindPath2(string src, string dest, List<Link> links, List<Device> devices)
-        //{
-        //    bool destReached = false;
-        //    Dictionary<string, int> dist = new Dictionary<string, int >();
-        //    Dictionary<string, string> prev = new Dictionary<string, string>();
-
-
-
-        //    Queue<string> remaining = new Queue<string>();
-
-        //    Dictionary<string, List<string>> nodes = ConverToAdjacencyMatrix(src, dest, links, devices);
-
-        //    foreach (var node in nodes.Keys)
-        //    {
-        //        //We assume the lenght between all node is equal
-        //        dist.Add(node, 1);
-        //        remaining.Enqueue(node);
-        //    }
-
-        //    dist.Add(src, 0);
-
-        //    while (remaining.Count > 0 || destReached)
-        //    {
-        //        string n = remaining.Dequeue();
-        //        foreach (var neighbour in nodes.First(k => k.Key == n).Value)
-        //        {
-        //            int new_pathLength = dist.First(k => k.Key == n).Value + 1;
-        //            int old_pathLength = dist.First(k => k.Key == n).Value;
-
-        //            dist.Add(neighbour, new_pathLength);
-        //            prev.Add(neighbour, n);
-        //        }
-        //    }
-
-        //    return prev;
-        //}
-
-
-        //private Dictionary<string, List<string>> ConverToAdjacencyMatrix(string src, string dest, List<Link> links, List<Device> devices)
-        //{
-        //    List<Device> nodes = devices.FindAll(d => d.type == "Switch");
-        //    Dictionary<string, List<string>> graph = new Dictionary<string, List<string>>();
-
-        //    foreach (var node in nodes)
-        //    {
-        //        List<Link> nodeLinks = links.FindAll(n => n.source == node.name || n.source == src);
-        //        List<Device> availDevice = devices.FindAll(d => nodeLinks.Exists(nl => nl.destination == d.name));
-
-        //        graph[node.name] = availDevice.Select(d => d.name).ToList();
-
-        //    }
-
-        //    return graph;
-
-        //}
-
-        //private void BFS(List<string>[] adj, string src, string[] dist, string[] paths, int n)
-        //{
-        //    bool[] visited = new bool[n];
-        //    for (int i = 0; i < n; i++)
-        //        visited[i] = false;
-        //    dist.First = 0;
-        //    paths[src] = 1;
-
-        //    List<int> q = new List<int>();
-        //    q.Add(src);
-        //    visited[src] = true;
-        //    while (q.Count != 0)
-        //    {
-        //        int curr = q[0];
-        //        q.RemoveAt(0);
-
-        //        // For all neighbors of current vertex do: 
-        //        foreach (int x in adj[curr])
-        //        {
-
-        //            // if the current vertex is not yet 
-        //            // visited, then push it to the queue. 
-        //            if (visited[x] == false)
-        //            {
-        //                q.Add(x);
-        //                visited[x] = true;
-        //            }
-
-        //            // check if there is a better path. 
-        //            if (dist[x] > dist[curr] + 1)
-        //            {
-        //                dist[x] = dist[curr] + 1;
-        //                paths[x] = paths[curr];
-        //            }
-
-        //            // additional shortest paths found 
-        //            else if (dist[x] == dist[curr] + 1)
-        //                paths[x] += paths[curr];
-        //        }
-        //    }
-        //}
 
         public Tuple<List<Route>, bool> FindAllPaths(string src, string dest, List<Link> links, List<Device> devices, List<Link> used, List<Route> allRoutes, bool validPath)
         {
@@ -237,10 +140,130 @@ namespace TSN.Based.Distributed.CPS
                     return Tuple.Create(allRoutes, validPath);
 
                 }
-            } 
+            }
             return Tuple.Create(allRoutes, validPath);
 
         }
+
+        // A recursive function to print 
+        // all paths from 'u' to 'd'. 
+        // isVisited[] keeps track of 
+        // vertices in current path. 
+        // localPathList<> stores actual 
+        // vertices in the current path 
+
+ 
+        public bool compute(string src, string dest, List<Link> links, List<Device> devices, List<Link> used, List<Route> allRoutes, bool validPath)
+        {
+            List<string> deviceNames = new List<string>();
+            List<Device> availDevices = devices.FindAll(d => d.type == "Switch" || d.name == src || d.name == dest);
+            foreach (Device dn in availDevices) { deviceNames.Add(dn.name); }
+
+            List<Link> availableLinks =
+                links.FindAll(link => link.source == src || link.destination == dest || (deviceNames.Contains(link.source) && deviceNames.Contains(link.destination)));
+
+            Graph g = new Graph(deviceNames);
+            
+            foreach (Link link in availableLinks)
+            {
+                g.addEdge(link.source, link.destination);
+
+            }
+
+            Console.WriteLine("Following are all different"
+                              + " paths from " + src + " to " + dest);
+            g.GetAllPaths(src, dest);
+            return true;
+        }
+    }
+}
+public class Graph
+{
+
+    // Number of switches + src and dest in graph 
+    private List<string> devices;
+
+    // adjacency list 
+    private Dictionary<string, List<string>> adjList;
+
+    // Constructor 
+    public Graph(List<string> devices)
+    {
+
+        // initialise vertex count 
+        this.devices = devices;
+
+        // initialise adjacency list 
+        initAdjList();
     }
 
+    // utility method to initialise 
+    // adjacency list 
+    private void initAdjList()
+    {
+        adjList = new Dictionary<string, List<string>>();
+
+        foreach (string device in devices)
+        {
+            adjList.Add(device, new List<string>());
+        }
+    }
+
+    // add edge from u to v 
+    public void addEdge(string src, string dest)
+    {
+        // Add link to list. 
+        adjList[src].Add(dest);
+    }
+
+    private void allPathsUtil(string src, string dest,
+                                          Dictionary<string, bool> isVisited,
+                                          List<string> localPathList)
+    {
+
+        if (src.Equals(dest))
+        {
+            Console.WriteLine(string.Join(" ", localPathList));
+            // if match found then no need 
+            // to traverse more till depth 
+            return;
+        }
+
+        // Mark the current node 
+        isVisited[src] = true;
+
+        // Recur for all the vertices 
+        // adjacent to current vertex 
+        foreach (string i in adjList[src])
+        {
+            if (!isVisited[i])
+            {
+                // store current node 
+                // in path[] 
+                localPathList.Add(i);
+                allPathsUtil(i, dest, isVisited,
+                                  localPathList);
+
+                // remove current node 
+                // in path[] 
+                localPathList.Remove(i);
+            }
+        }
+        // Mark the current node 
+        isVisited[src] = false;
+    }
+    public void GetAllPaths(string src, string dest)
+    {
+        Dictionary<string, bool> isVisited = new Dictionary<string, bool>();
+        foreach (string device in devices) { isVisited.Add(device, false); }
+
+        List<string> pathList = new List<string>();
+
+        // add source to path[] 
+        pathList.Add(src);
+
+        // Call recursive utility 
+        allPathsUtil(src, dest, isVisited, pathList);
+    }
 }
+

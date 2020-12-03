@@ -41,7 +41,8 @@ namespace TSN.Based.Distributed.CPS
                     }
                     bool test = true;
                     //(i_state.Route[j], v) = (paths.FindPath(streams[i].source, streams[i].destination, links, devices, j, v, i_state.Route[j], 1));
-                    (i_state.Route, test) = (paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true));
+                    bool hey = paths.compute(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true);
+                    //(i_state.Route, test) = (paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true));
 
                 }
 
