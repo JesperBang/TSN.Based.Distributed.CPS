@@ -10,7 +10,7 @@ namespace TSN.Based.Distributed.CPS
         {
             RandomState random = new RandomState();
             CostFunction cf = new CostFunction();
-
+            CoveredLinks cl = new CoveredLinks();
             List<Link> links;
             List<Device> devices;
             List<Stream> streams;
@@ -18,6 +18,8 @@ namespace TSN.Based.Distributed.CPS
 
             List<Solution> s_best = random.generateState(streams, links, devices);
 
+            int oneWay = cl.numberOfOneLinksCovered(s_best, devices, links);
+            int twoWay = cl.numberOfTwoLinksCovered(s_best, devices, links);
             double temp = 5000000;
             double r = 0.003;
             int nonew = 0;
