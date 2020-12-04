@@ -30,21 +30,21 @@ namespace TSN.Based.Distributed.CPS
                     period = streams[i].period,
                     rl = streams[i].rl
                 };
-                Dictionary<string, int> v = new Dictionary<string, int>();
-                for (int j = 0; j < i_state.rl; j++)
-                    {
+
+                    //Utillize the FindAllPath function to get all possible routes between to endsystems.
+                    List<Route> allPaths = paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true);
+                    
+                    //Sort paths based on number of links 
+                    allPaths.Sort((a,b) => a.links.Count - b.links.Count);
+
+                    //Assign unique routes according to the rl value. If rl is bigger than the number of paths, the paths are used again. 
                     if (i_state.Route.Count < i_state.rl) { 
                         for (int r = 0; r < i_state.rl; r++)
                         {
-                            i_state.Route.Add(new Route());
+                            i_state.Route.Add(allPaths[r % (allPaths.Count + 1)]);
                         }
-                    }
-                    bool test = true;
-                    //(i_state.Route[j], v) = (paths.FindPath(streams[i].source, streams[i].destination, links, devices, j, v, i_state.Route[j], 1));
-                    bool hey = paths.compute(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true);
-                    //(i_state.Route, test) = (paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true));
 
-                }
+                    }
 
                 state.Add(i_state);
             }
