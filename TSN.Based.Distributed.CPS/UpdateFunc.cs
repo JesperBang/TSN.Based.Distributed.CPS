@@ -11,55 +11,36 @@ namespace TSN.Based.Distributed.CPS
         {
             PathFinder pf = new PathFinder();
             Random rnd = new Random();
+            bool newState = false;
+            int noOfRetries = 0;
             // find random stream
-            int streamRandom = rnd.Next(0, solutions.Count);
-            Solution currStream = solutions[streamRandom];
-            // find random route for the specific stream
-            int routeCount = currStream.Route.Count;
-            int routeRandom = rnd.Next(0, routeCount);
-            Route currRoutes = currStream.Route[routeRandom];
-            // find random link for the specific route
-            int linkToReplaceFrom = rnd.Next(0, currRoutes.links.Count);
+            while (!newState && noOfRetries < solutions.Count)
+            {
+                int streamRandom = rnd.Next(0, solutions.Count);
+                Solution currStream = solutions[streamRandom];
+                // find random route for the specific stream
 
-            // make new route with the remnants from the old route that should still be used
-            Route newRoute = new Route();
-            newRoute.links = currRoutes.links.GetRange(0, linkToReplaceFrom);
-            
-            // call path method with the source of the random link and the destination of the stream
-            string src = currRoutes.links[linkToReplaceFrom].source;
-            string dest = currStream.dest;
+                List<Route> allRoutes = pf.FindAllPaths(currStream.src, currStream.dest, links, devices);
 
-            //if (currStream.rl > 1) {
-            //    List<string> visited = new List<string>();
-            //    currStream.Route.RemoveAt(routeRandom);
-            //    foreach(Route r in currStream.Route)
-            //    {
-            //        foreach (Link l in r.links)
-            //        {
-            //            if (l.source != currStream.dest)
-            //            {
-            //                visited.Add(l.source);
-            //            }
-            //        }
-            //    }
-            //    List<Route> path = pf.FindPath(src, dest, links, devices, 1, visited, new List<Route>(), src, dest);
-            //    newRoute.links.AddRange(path[0].links);
-            //    currStream.Route.Add(newRoute);
-            //    solutions[streamRandom].Route = currStream.Route;
-            //}
-            //else
-            //{               
-            //    List<Route> path = pf.FindPath(src, dest, links, devices, 1, new List<string>(), new List<Route>(), src, dest);
+                if (currStream.rl < allRoutes.Count)
+                {
 
-            //    // add the newly found path to the route
-            //    newRoute.links.AddRange(path[0].links);
+                    int routeCount = currStream.Route.Count;
+                    int routeRandom = rnd.Next(0, currStream.Route.Count);
 
-            //    // remove old route and add new to solution
-            //    solutions[streamRandom].Route[routeRandom] = newRoute;
+                    //Find all possible new routes 
+                    List<Route> temp = allRoutes.FindAll(r => !currStream.Route.Exists(cr => cr.id == r.id));
+                    int tempRandom = rnd.Next(0, temp.Count);
 
-            //}
+                    //Remove random old route and add random new from the list of possible new.
+                    currStream.Route.RemoveAt(routeRandom);
+                    currStream.Route.Add(temp[tempRandom]);
 
-
+                    // call path method with the source of the random link and the destination of the stream
+                    newState = true;
+                }
+                noOfRetries++;
+            }
             return solutions;
         }
 

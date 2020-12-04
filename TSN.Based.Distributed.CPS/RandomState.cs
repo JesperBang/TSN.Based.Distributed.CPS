@@ -32,7 +32,7 @@ namespace TSN.Based.Distributed.CPS
                 };
 
                     //Utillize the FindAllPath function to get all possible routes between to endsystems.
-                    List<Route> allPaths = paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices, new List<Link>(), i_state.Route, true);
+                    List<Route> allPaths = paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices);
                     
                     //Sort paths based on number of links 
                     allPaths.Sort((a,b) => a.links.Count - b.links.Count);

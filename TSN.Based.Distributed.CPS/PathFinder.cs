@@ -6,7 +6,7 @@ namespace TSN.Based.Distributed.CPS
 {
     class PathFinder
     {
-        public List<Route> FindAllPaths(string src, string dest, List<Link> links, List<Device> devices, List<Link> used, List<Route> allRoutes, bool validPath)
+        public List<Route> FindAllPaths(string src, string dest, List<Link> links, List<Device> devices)
         {
             List<string> deviceNames = new List<string>();
             List<Device> availDevices = devices.FindAll(d => d.type == "Switch" || d.name == src || d.name == dest);
@@ -22,9 +22,11 @@ namespace TSN.Based.Distributed.CPS
                 g.addEdge(link.source, link.destination);
 
             }
+            
+            //Print info in console
+            //Console.WriteLine("Following are all different"
+            //                  + " paths from " + src + " to " + dest);
 
-            Console.WriteLine("Following are all different"
-                              + " paths from " + src + " to " + dest);
             List<Route> routes = g.GetAllPaths(src, dest);
             return routes;
         }
@@ -82,11 +84,13 @@ namespace TSN.Based.Distributed.CPS
 
             if (src.Equals(dest))
             {
-                Console.WriteLine(string.Join(" ", localPathList));
+                //See output in console
+                //Console.WriteLine(string.Join(" ", localPathList));
 
                 routes.Add(new Route());
                 routes[solutionNo].src = ogSrc;
                 routes[solutionNo].dest = ogDest;
+                routes[solutionNo].id = solutionNo;
                 routes[solutionNo].links = new List<Link>();
 
                 for (int i = 0; i < localPathList.Count - 1; i++)
