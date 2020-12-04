@@ -18,8 +18,9 @@
     <!-- Links are directional-->
     <!-- speed = byte/us-->
     <link src="ES1" dest="SW1" speed="12.5"/>
+	<link src="ES1" dest="SW2" speed="12.5"/>
 
-    <link src="ES2" dest="SW2" speed="12.5"/>
+	<link src="ES2" dest="SW2" speed="12.5"/>
 
     <link src="ES3" dest="SW3" speed="12.5"/>
 

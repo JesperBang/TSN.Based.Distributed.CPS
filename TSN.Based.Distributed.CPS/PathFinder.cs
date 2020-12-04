@@ -6,7 +6,7 @@ namespace TSN.Based.Distributed.CPS
 {
     class PathFinder
     {
-        public List<Route> FindAllPaths(string src, string dest, List<Link> links, List<Device> devices, List<Link> used, List<Route> allRoutes, bool validPath)
+        public List<Route> FindAllPaths(string src, string dest, List<Link> links, List<Device> devices)
         {
             List<string> deviceNames = new List<string>();
             List<Device> availDevices = devices.FindAll(d => d.type == "Switch" || d.name == src || d.name == dest);

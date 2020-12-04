@@ -1,0 +1,84 @@
+﻿<NetworkDescription>
+	<device type="Switch" name="SW0" />
+	<device type="Switch" name="SW1" />
+	<device type="Switch" name="SW2" />
+	<device type="Switch" name="SW3" />
+	<device type="EndSystem" name="ES0" />
+	<device type="EndSystem" name="ES1" />
+	<device type="EndSystem" name="ES2" />
+	<device type="EndSystem" name="ES3" />
+	<device type="EndSystem" name="ES4" />
+	<device type="EndSystem" name="ES5" />
+	<device type="EndSystem" name="ES6" />
+	<device type="EndSystem" name="ES7" />
+	<device type="EndSystem" name="ES8" />
+	<device type="EndSystem" name="ES9" />
+	<device type="EndSystem" name="ES10" />
+	<device type="EndSystem" name="ES11" />
+	<link src="SW0" dest="ES0" speed="12.50" />
+	<link src="ES0" dest="SW0" speed="12.50" />
+	<link src="SW0" dest="ES1" speed="12.50" />
+	<link src="ES1" dest="SW0" speed="12.50" />
+	<link src="SW0" dest="ES2" speed="12.50" />
+	<link src="ES2" dest="SW0" speed="12.50" />
+	<link src="SW1" dest="ES3" speed="12.50" />
+	<link src="ES3" dest="SW1" speed="12.50" />
+	<link src="SW1" dest="ES4" speed="12.50" />
+	<link src="ES4" dest="SW1" speed="12.50" />
+	<link src="SW1" dest="ES5" speed="12.50" />
+	<link src="ES5" dest="SW1" speed="12.50" />
+	<link src="SW2" dest="ES6" speed="12.50" />
+	<link src="ES6" dest="SW2" speed="12.50" />
+	<link src="SW2" dest="ES7" speed="12.50" />
+	<link src="ES7" dest="SW2" speed="12.50" />
+	<link src="SW2" dest="ES8" speed="12.50" />
+	<link src="ES8" dest="SW2" speed="12.50" />
+	<link src="SW3" dest="ES9" speed="12.50" />
+	<link src="ES9" dest="SW3" speed="12.50" />
+	<link src="SW3" dest="ES10" speed="12.50" />
+	<link src="ES10" dest="SW3" speed="12.50" />
+	<link src="SW3" dest="ES11" speed="12.50" />
+	<link src="ES11" dest="SW3" speed="12.50" />
+	<link src="SW1" dest="SW0" speed="12.50" />
+	<link src="SW2" dest="SW0" speed="12.50" />
+	<link src="SW3" dest="SW0" speed="12.50" />
+	<link src="SW0" dest="SW1" speed="12.50" />
+	<link src="SW3" dest="SW1" speed="12.50" />
+	<link src="SW0" dest="SW2" speed="12.50" />
+	<link src="SW3" dest="SW2" speed="12.50" />
+	<link src="SW0" dest="SW3" speed="12.50" />
+	<link src="SW1" dest="SW3" speed="12.50" />
+	<link src="SW2" dest="SW3" speed="12.50" />
+	<stream id="Stream_1" src="ES7" dest="ES9" size="750" period="1000" deadline="5000" rl="3" />
+	<stream id="Stream_2" src="ES5" dest="ES2" size="750" period="1000" deadline="5000" rl="3" />
+	<stream id="Stream_3" src="ES10" dest="ES3" size="750" period="1000" deadline="5000" rl="2" />
+	<stream id="Stream_4" src="ES9" dest="ES10" size="750" period="1000" deadline="5000" rl="2" />
+	<stream id="Stream_5" src="ES10" dest="ES4" size="500" period="500" deadline="3500" rl="3" />
+	<stream id="Stream_6" src="ES10" dest="ES11" size="500" period="500" deadline="3500" rl="2" />
+	<stream id="Stream_7" src="ES4" dest="ES5" size="500" period="500" deadline="3500" rl="2" />
+	<stream id="Stream_8" src="ES6" dest="ES0" size="500" period="500" deadline="3500" rl="3" />
+	<stream id="Stream_9" src="ES6" dest="ES5" size="500" period="500" deadline="3500" rl="3" />
+	<stream id="Stream_10" src="ES2" dest="ES6" size="500" period="500" deadline="3500" rl="2" />
+	<stream id="Stream_11" src="ES5" dest="ES8" size="750" period="1000" deadline="5000" rl="3" />
+	<stream id="Stream_12" src="ES5" dest="ES7" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_13" src="ES2" dest="ES4" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_14" src="ES8" dest="ES1" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_15" src="ES8" dest="ES7" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_16" src="ES6" dest="ES2" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_17" src="ES10" dest="ES9" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_18" src="ES5" dest="ES3" size="750" period="1000" deadline="5000" rl="1" />
+	<stream id="Stream_19" src="ES11" dest="ES10" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_20" src="ES2" dest="ES11" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_21" src="ES3" dest="ES1" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_22" src="ES2" dest="ES5" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_23" src="ES7" dest="ES6" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_24" src="ES11" dest="ES2" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_25" src="ES8" dest="ES0" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_26" src="ES11" dest="ES8" size="750" period="1000" deadline="25000" rl="1" />
+	<stream id="Stream_27" src="ES9" dest="ES11" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_28" src="ES3" dest="ES0" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_29" src="ES7" dest="ES2" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_30" src="ES2" dest="ES10" size="500" period="500" deadline="3500" rl="1" />
+	<stream id="Stream_31" src="ES10" dest="ES7" size="500" period="750" deadline="4000" rl="1" />
+	<stream id="Stream_32" src="ES4" dest="ES11" size="750" period="1000" deadline="5000" rl="1" />
+</NetworkDescription>

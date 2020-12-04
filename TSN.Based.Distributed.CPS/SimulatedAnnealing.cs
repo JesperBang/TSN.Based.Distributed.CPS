@@ -10,6 +10,7 @@ namespace TSN.Based.Distributed.CPS
         {
             RandomState random = new RandomState();
             CostFunction cf = new CostFunction();
+            CoveredLinks cl = new CoveredLinks();
 
             List<Link> links;
             List<Device> devices;
@@ -17,6 +18,10 @@ namespace TSN.Based.Distributed.CPS
             (devices, links, streams) = XmlReader.LoadXml(xml);
 
             List<Solution> s_best = random.generateState(streams, links, devices);
+
+
+
+           
 
             double temp = 5000000;
             double r = 0.003;
@@ -29,7 +34,10 @@ namespace TSN.Based.Distributed.CPS
                 List<Solution> s_new;
                 if (nonew > 100) { s_new = random.generateState(streams, links, devices); }
                 else { s_new = new UpdateFunc().updateSolution(s_best, links, devices); }
+                int Oneway = cl.numberOfOneLinksCovered(s_new, devices, links);
 
+                
+                int twoway = cl.numberOfTwoLinksCovered(s_new, devices, links);
                 double s_new_cost = cf.CalcCostFunction(s_new);
                 double acceptance = Acceptance.Acceptance_Function(c_best, s_new_cost, temp);
 
