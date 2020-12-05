@@ -31,15 +31,20 @@ namespace TSN.Based.Distributed.CPS
                     rl = streams[i].rl
                 };
 
-                if(i_state.rl > 1)
-                {
-                    i_state.Route = paths.FindMultiplePaths(streams[i].source, streams[i].destination, links, devices, i_state.rl, new List<string>(), new List<Route>());
+                    //Utillize the FindAllPath function to get all possible routes between to endsystems.
+                    List<Route> allPaths = paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices);
+                    
+                    //Sort paths based on number of links 
+                    allPaths.Sort((a,b) => a.links.Count - b.links.Count);
 
-                }
-                else
-                {
-                    i_state.Route.Add(paths.FindPath(streams[i].source, streams[i].destination, links, devices, new List<string>(), new Route()));
-                }
+                    //Assign unique routes according to the rl value. If rl is bigger than the number of paths, the paths are used again. 
+                    if (i_state.Route.Count < i_state.rl) { 
+                        for (int r = 0; r < i_state.rl; r++)
+                        {
+                            i_state.Route.Add(allPaths[r % (allPaths.Count + 1)]);
+                        }
+
+                    }
 
                 state.Add(i_state);
             }
@@ -47,7 +52,5 @@ namespace TSN.Based.Distributed.CPS
             return state;
 
         }
-
-
     }
 }
