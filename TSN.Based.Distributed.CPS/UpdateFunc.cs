@@ -43,6 +43,5 @@ namespace TSN.Based.Distributed.CPS
             }
             return solutions;
         }
-
     }
 }

@@ -43,14 +43,9 @@ namespace TSN.Based.Distributed.CPS
                 {
                     for (int r = 0; r < i_state.rl; r++)
                     {
-                        try
-                        {
-                            i_state.Route.Add(allPaths[r % (allPaths.Count + 1)]);
-                        }
-                        catch (Exception e)
-                        {
-                            i_state.Route.Add(allPaths[(r - 1) % (allPaths.Count + 1)]);
-                        }
+
+                        i_state.Route.Add(allPaths[r % (allPaths.Count)]);
+
                     }
                 }
 

@@ -31,6 +31,7 @@ namespace TSN.Based.Distributed.CPS
                 else { s_new = new UpdateFunc().updateSolution(s_best, links, devices); }
 
                 var onelin = new CoveredLinks().numberOfOneLinksCovered(s_new, devices, links);
+
                 var twolin = new CoveredLinks().numberOfTwoLinksCovered(s_new, devices, links);
 
                 double s_new_cost = cf.CalcCostFunction(s_new);

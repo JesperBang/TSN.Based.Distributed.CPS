@@ -12,8 +12,6 @@ namespace TSN.Based.Distributed.CPS
             PathFinder path = new PathFinder();
             foreach (Solution sol in input)
             {
-                if (sol.rl > 1)
-                {
                     List<Link> allLinks = links.FindAll(l => sol.Route.Exists(r => r.links.Contains(l)));
                     foreach (Link l in allLinks.ToList())
                     {
@@ -23,7 +21,6 @@ namespace TSN.Based.Distributed.CPS
 
                         allLinks.Add(l);
                     }
-                }
             }
             return count;
         }
@@ -34,8 +31,6 @@ namespace TSN.Based.Distributed.CPS
             PathFinder path = new PathFinder();
             foreach (Solution sol in input)
             {
-                if (sol.rl > 1)
-                {
                     List<Link> allLinks = links.FindAll(l => sol.Route.Exists(r => r.links.Contains(l)));
 
                     for (int i = 0; i < allLinks.Count - 1; i++)
@@ -46,7 +41,6 @@ namespace TSN.Based.Distributed.CPS
 
                         if (allRoutes.Count < 1) count++;
                     }
-                }
             }
             return count;
         }
