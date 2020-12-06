@@ -17,8 +17,6 @@ namespace TSN.Based.Distributed.CPS
         {
             LinkUtil lu = new LinkUtil();
             double totalCost = 0;
-            int BandTerm;
-            int OverlapTerm;
 
             foreach (Solution sol in input)
             {
@@ -26,7 +24,8 @@ namespace TSN.Based.Distributed.CPS
                 Dictionary<string, int> linkmap = new Dictionary<string, int>();
 
                 // Use LinkUtil to test bandwidth
-                BandTerm = lu.IsBandwidthExceeded(sol) ? 1 : 0;
+                int BandTerm = new LinkUtil().IsBandwidthExceeded(sol) ? 1 : 0;
+                int ScheduTerm = new LinkUtil().IsScheduable(stream(sol)) ? 1 : 0;
 
                 // Overlapping links
                 foreach (Route route in sol.Route)
@@ -39,14 +38,14 @@ namespace TSN.Based.Distributed.CPS
                     LenTerm += route.links.Count;
                 }
 
-                OverlapTerm = linkmap.Where(links => links.Value > 1).Count();
+                int OverlapTerm = linkmap.Where(links => links.Value > 1).Count();
 
                 // Average length of routes
                 LenTerm = LenTerm / sol.Route.Count();
 
                 // Total cost calc
-                totalCost += CostCalc(BandTerm, OverlapTerm, LenTerm);
-                sol.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm);
+                totalCost += CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm);
+                sol.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm);
             }
 
             return totalCost;
@@ -59,11 +58,33 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="OverlapTerm"></param>
         /// <param name="LenTerm"></param>
         /// <returns>Returns cost for item as double</returns>
-        public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm)
+        public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm, double ScheduTerm)
         {
             return double.Parse(ConfigurationManager.AppSettings.Get("w1")) * BandTerm + 
                 double.Parse(ConfigurationManager.AppSettings.Get("w2")) * OverlapTerm + 
-                double.Parse(ConfigurationManager.AppSettings.Get("w3")) * LenTerm;
+                double.Parse(ConfigurationManager.AppSettings.Get("w3")) * LenTerm +
+                double.Parse(ConfigurationManager.AppSettings.Get("w4")) * ScheduTerm;
+        }
+
+
+        /// <summary>
+        /// Converter from solution to stream - used to satisfy LinkUtil input
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static Stream stream(Solution s)
+        {
+            Stream st = new Stream();
+            st.Cost = s.Cost;
+            st.deadline = s.deadline;
+            st.destination = s.destination;
+            st.period = s.period;
+            st.rl = s.rl;
+            st.Route = s.Route;
+            st.size = s.size;
+            st.source = s.source;
+            st.streamId = s.StreamId;
+            return st;
         }
     }
 }

@@ -30,6 +30,9 @@ namespace TSN.Based.Distributed.CPS
                 if (nonew > 100) { s_new = random.generateState(streams, links, devices); }
                 else { s_new = new UpdateFunc().updateSolution(s_best, links, devices); }
 
+                var onelin = new CoveredLinks().numberOfOneLinksCovered(s_new, devices, links);
+                var twolin = new CoveredLinks().numberOfTwoLinksCovered(s_new, devices, links);
+
                 double s_new_cost = cf.CalcCostFunction(s_new);
                 double acceptance = Acceptance.Acceptance_Function(c_best, s_new_cost, temp);
 
@@ -55,9 +58,7 @@ namespace TSN.Based.Distributed.CPS
 
                 temp = temp * (1 - r);
             }
-
             XMLWriter.To_XML(s_best, c_best, xml);
-
         }
     }
 }

@@ -23,6 +23,9 @@ namespace TSN.Based.Distributed.CPS
                 case 2:
                     xmlfile = "TC3_medium.app_network_description";
                     break;
+                case 3:
+                    xmlfile = "TC5_large1.app_network_description";
+                    break;
             }
 
             string filename = "../../../inputs/" + xmlfile;

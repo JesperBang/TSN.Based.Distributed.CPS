@@ -15,7 +15,7 @@ namespace TSN.Based.Distributed.CPS
 
             while (!input)
             {
-                Console.WriteLine("Please select test file: Press 1 for small.xml or 2 for medium.xml");
+                Console.WriteLine("Please select test file: Press 1 for small.xml, 2 for medium.xml or 3 for large.xml");
                 try
                 {
                     num = Convert.ToInt32(Console.ReadLine());
@@ -26,9 +26,9 @@ namespace TSN.Based.Distributed.CPS
                     num = 0;
                 }
 
-                if ((num <= 0) || (num >= 3))
+                if ((num <= 0) || (num >= 4))
                 {
-                    Console.WriteLine("Input must be 1 or 2");
+                    Console.WriteLine("Input must be 1, 2 or 3");
                 }
                 else
                 {
