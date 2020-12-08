@@ -1,6 +1,29 @@
 # TSN.Based.Distributed.CPS
 Redundant routing of critical messages for a TSN-based distributed CPS
 
+## Usage
+Open the solution (.sln) in visual studio or unpack the compiled release.
+* When running via Visual Studio we recommend to build the project and then navigate to the executeable in the bin folder. When running the user will be greeted by a command propt asking to chose which file to use for input.
+```text
+$ Please select test file: Press 1 for small.xml, 2 for medium.xml, 3 for large.xml or 4 for huge.xml 
+```
+The code can also run through the build in debugger in Visual Studio. For both these methods the output can be located in the source of the project 
+```text
+ bin -> release/debugg -> {TC0_small.solution},...,{TC7_huge.solution} 
+```
+The prerun solutions that we found can be seen and evaluated in the root of the project in the folder called "solutions".
+
+* When running the code using the pre compiled executable and dll files the output {TC0_small.solution},...,{TC7_huge.solution} can be found in the same folder as the executable.
+
+### Config
+App.config contains the weighted values for the cost function {w1},...,{w4} and can be changed without recompiling the project.
+
+## Build
+```bash
+# this will build the project into /bin
+$ dotnet build
+```
+
 ## Version Control - GitFlow (Protection)
 GitFlow with the given configuration in this project has the following branches:
 * **<img src="https://raw.githubusercontent.com/ModernPGP/icons/master/encryption/lock-closed.png" alt="drawing" width="15"/>Master branch:** Containing the current production code.
@@ -20,22 +43,3 @@ Using this approach makes it possible to develop new features parallel to each o
 Tagging branches with appropriate metadata is desired to keep track of branches.
 * All merges must be tagged. This can easily be done with GitBash, Sourcetree or any other IDE.
 * All commits must be tagged with prefix, e.g. feature/[branchname] or release/[branchnames].
-
-
-## Installation
-
-## Build
-```bash
-# this will build the project into /bin
-$ dotnet build
-```
-
-## Usage
-
-## Test
-
-## Documentation
-
-### CLI
-
-### Config
