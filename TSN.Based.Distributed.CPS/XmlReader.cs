@@ -30,7 +30,7 @@ namespace TSN.Based.Distributed.CPS
                     break;
             }
 
-            string filename = "../../../inputs/" + xmlfile;
+            string filename = "inputs/" + xmlfile;
             //string filename = "/inputs/" + xmlfile;
             List<Device> devices = new List<Device>();
             List<Link> link = new List<Link>();
