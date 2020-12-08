@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
@@ -13,12 +12,15 @@ namespace TSN.Based.Distributed.CPS
         /// </summary>
         /// <param name="input"></param>
         /// <returns>Cost as a double</returns>
-        public double CalcCostFunction(List<Solution> input) 
+        public double CalcCostFunction(List<Solution> input, List<Device> devices, List<Link> links) 
         {
-            LinkUtil lu = new LinkUtil();
             double totalCost = 0;
-            int BandTerm;
-            int OverlapTerm;
+
+            //int coveredone = new CoveredLinks().numberOfOneLinksCovered(input, devices, links);
+            //int coveredtwo = new CoveredLinks().numberOfTwoLinksCovered(input, devices, links);
+            int coveredone = 0;
+            int coveredtwo = 0;
+
 
             foreach (Solution sol in input)
             {
@@ -26,7 +28,8 @@ namespace TSN.Based.Distributed.CPS
                 Dictionary<string, int> linkmap = new Dictionary<string, int>();
 
                 // Use LinkUtil to test bandwidth
-                BandTerm = lu.IsBandwidthExceeded(sol) ? 1 : 0;
+                int BandTerm = new LinkUtil().IsBandwidthExceeded(sol) ? 1 : 0;
+                int ScheduTerm = new LinkUtil().IsScheduable(stream(sol)) ? 0 : 1;
 
                 // Overlapping links
                 foreach (Route route in sol.Route)
@@ -39,14 +42,14 @@ namespace TSN.Based.Distributed.CPS
                     LenTerm += route.links.Count;
                 }
 
-                OverlapTerm = linkmap.Where(links => links.Value > 1).Count();
+                var overlap = linkmap.Where(links => links.Value > 1).ToList();
+                var keys = overlap.Count();
+                int OverlapTerm = overlap.Sum(value => value.Value) - overlap.Count();
 
-                // Average length of routes
-                LenTerm = LenTerm / sol.Route.Count();
 
                 // Total cost calc
-                totalCost += CostCalc(BandTerm, OverlapTerm, LenTerm);
-                sol.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm);
+                totalCost += CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm, coveredone, coveredtwo);
+                sol.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm, coveredone, coveredtwo);
             }
 
             return totalCost;
@@ -59,11 +62,36 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="OverlapTerm"></param>
         /// <param name="LenTerm"></param>
         /// <returns>Returns cost for item as double</returns>
-        public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm)
+        public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm, double ScheduTerm, int coveredone, int coveredtwo)
         {
-            return double.Parse(ConfigurationManager.AppSettings.Get("w1")) * BandTerm + 
-                double.Parse(ConfigurationManager.AppSettings.Get("w2")) * OverlapTerm + 
-                double.Parse(ConfigurationManager.AppSettings.Get("w3")) * LenTerm;
+            return (double.Parse(ConfigurationManager.AppSettings.Get("w1")) * BandTerm) +
+                (double.Parse(ConfigurationManager.AppSettings.Get("w2")) * OverlapTerm) +
+                (double.Parse(ConfigurationManager.AppSettings.Get("w3")) * LenTerm) +
+                (double.Parse(ConfigurationManager.AppSettings.Get("w4")) * ScheduTerm);
+
+            // (double.Parse(ConfigurationManager.AppSettings.Get("w2")) * (coveredone + coveredtwo))
+
+        }
+
+
+        /// <summary>
+        /// Converter from solution to stream - used to satisfy LinkUtil input
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static Stream stream(Solution s)
+        {
+            Stream st = new Stream();
+            st.Cost = s.Cost;
+            st.deadline = s.deadline;
+            st.destination = s.destination;
+            st.period = s.period;
+            st.rl = s.rl;
+            st.Route = s.Route;
+            st.size = s.size;
+            st.source = s.source;
+            st.streamId = s.StreamId;
+            return st;
         }
     }
 }

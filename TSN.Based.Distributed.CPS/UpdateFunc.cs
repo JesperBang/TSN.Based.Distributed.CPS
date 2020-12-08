@@ -20,7 +20,7 @@ namespace TSN.Based.Distributed.CPS
                 Solution currStream = solutions[streamRandom];
                 // find random route for the specific stream
 
-                List<Route> allRoutes = pf.FindAllPaths(currStream.src, currStream.dest, links, devices);
+                List<Route> allRoutes = pf.FindAllPaths(currStream.source, currStream.destination, links, devices);
 
                 if (currStream.rl < allRoutes.Count)
                 {
@@ -43,6 +43,5 @@ namespace TSN.Based.Distributed.CPS
             }
             return solutions;
         }
-
     }
 }

@@ -13,31 +13,32 @@ namespace TSN.Based.Distributed.CPS
 
             List<Link> links;
             List<Device> devices;
-            List<Stream> streams;
+            List<Models.Stream> streams;
+
             (devices, links, streams) = XmlReader.LoadXml(xml);
 
             List<Solution> s_best = random.generateState(streams, links, devices);
 
             double temp = 5000000;
-            double r = 0.003;
-            int nonew = 0;
+            double r = 0.00002;
+            int count = 0;
 
-            double c_best = cf.CalcCostFunction(s_best);
+            double c_best = cf.CalcCostFunction(s_best, devices, links);
 
             while (temp > 1)
             {
-                List<Solution> s_new;
-                if (nonew > 100) { s_new = random.generateState(streams, links, devices); }
-                else { s_new = new UpdateFunc().updateSolution(s_best, links, devices); }
+                count++;
 
-                double s_new_cost = cf.CalcCostFunction(s_new);
+                List<Solution> s_new = new UpdateFunc().updateSolution(s_best, links, devices);
+
+                double s_new_cost = cf.CalcCostFunction(s_new, devices, links);
+
                 double acceptance = Acceptance.Acceptance_Function(c_best, s_new_cost, temp);
 
                 if (acceptance.Equals(1.0))
                 {
                     s_best = s_new;
                     c_best = s_new_cost;
-                    nonew = 0;
                 }
                 else
                 {
@@ -45,19 +46,12 @@ namespace TSN.Based.Distributed.CPS
                     {
                         s_best = s_new;
                         c_best = s_new_cost;
-                        nonew = 0;
-                    }
-                    else
-                    {
-                        nonew += 1;
                     }
                 }
 
                 temp = temp * (1 - r);
             }
-
             XMLWriter.To_XML(s_best, c_best, xml);
-
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
@@ -25,26 +24,29 @@ namespace TSN.Based.Distributed.CPS
                     Route = new List<Route>(),
                     Cost = 0,
                     size = streams[i].size,
-                    src = streams[i].source,
-                    dest = streams[i].destination,
+                    source = streams[i].source,
+                    destination = streams[i].destination,
                     period = streams[i].period,
-                    rl = streams[i].rl
+                    rl = streams[i].rl,
+                    deadline = streams[i].deadline
                 };
 
-                    //Utillize the FindAllPath function to get all possible routes between to endsystems.
-                    List<Route> allPaths = paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices);
-                    
-                    //Sort paths based on number of links 
-                    allPaths.Sort((a,b) => a.links.Count - b.links.Count);
+                //Utillize the FindAllPath function to get all possible routes between to endsystems.
+                List<Route> allPaths = paths.FindAllPaths(streams[i].source, streams[i].destination, links, devices);
 
-                    //Assign unique routes according to the rl value. If rl is bigger than the number of paths, the paths are used again. 
-                    if (i_state.Route.Count < i_state.rl) { 
-                        for (int r = 0; r < i_state.rl; r++)
-                        {
-                            i_state.Route.Add(allPaths[r % (allPaths.Count + 1)]);
-                        }
+                //Sort paths based on number of links 
+                allPaths.Sort((a, b) => a.links.Count - b.links.Count);
+
+                //Assign unique routes according to the rl value. If rl is bigger than the number of paths, the paths are used again. 
+                if (i_state.Route.Count < i_state.rl)
+                {
+                    for (int r = 0; r < i_state.rl; r++)
+                    {
+
+                        i_state.Route.Add(allPaths[r % (allPaths.Count)]);
 
                     }
+                }
 
                 state.Add(i_state);
             }
