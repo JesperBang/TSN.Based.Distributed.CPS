@@ -1,6 +1,12 @@
 # TSN.Based.Distributed.CPS
 Redundant routing of critical messages for a TSN-based distributed CPS
 
+## Usage
+
+
+### Config
+
+
 ## Version Control - GitFlow (Protection)
 GitFlow with the given configuration in this project has the following branches:
 * **<img src="https://raw.githubusercontent.com/ModernPGP/icons/master/encryption/lock-closed.png" alt="drawing" width="15"/>Master branch:** Containing the current production code.
@@ -21,21 +27,8 @@ Tagging branches with appropriate metadata is desired to keep track of branches.
 * All merges must be tagged. This can easily be done with GitBash, Sourcetree or any other IDE.
 * All commits must be tagged with prefix, e.g. feature/[branchname] or release/[branchnames].
 
-
-## Installation
-
 ## Build
 ```bash
 # this will build the project into /bin
 $ dotnet build
 ```
-
-## Usage
-
-## Test
-
-## Documentation
-
-### CLI
-
-### Config
