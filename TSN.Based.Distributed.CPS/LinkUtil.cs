@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
@@ -22,37 +22,141 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="link">Link</param>
         /// <param name="hops">Hops</param>
         /// <returns></returns>
-        public bool IsScheduable(List<Stream> streams, List<List<Route>> routes)
+        public bool IsScheduable(Stream stream)
         {
-            double cycle_time = 0.0;
-            double smallest_period = 0.0;
+            Dictionary<string, double> dict = new Dictionary<string, double>();
+            double size_bit = stream.size * 8;
+            double deadline_s = stream.deadline / 1000000;
+            double period_s = stream.period / 1000000;
+            double smallest_period = period_s;
+            double cycle_time_max = 0.0;
 
+            //build up cycle_time and and save the smallest_period of streams
+            foreach (Route route in stream.Route)
+            {
+                if (route.src == stream.source && route.dest == stream.destination)
+                {
+                    foreach (Link link in route.links)
+                    {
+                        string link_name = link.source + "_" + link.destination;
+                        double linkSpeed_bit_per_s = link.speed * 8000000;
+                        double cycle_time = size_bit / linkSpeed_bit_per_s;
+
+                        if (dict.ContainsKey(link_name))
+                        {
+                            dict[link_name] += cycle_time;
+                        }
+                        else
+                        {
+                            dict[link_name] = cycle_time;
+                        }
+                    }
+                }
+            }
+            cycle_time_max = dict.Values.Max();
+
+            /*check each stream if their wcd is greater than deadline.
+             * if so, return false.
+             */
+            foreach (Route route in stream.Route)
+            {
+                if (route.src == stream.source && route.dest == stream.destination)
+                {
+                    int hops = FindHops(route);
+                    double wcd = (hops + 1) * cycle_time_max;
+                    if (wcd > deadline_s)
+                        return false;
+                }
+            }
+
+            /*also check if cycle time is greater
+             * than the smallest period among all streams.
+             * if so, return false.
+             */
+            if (cycle_time_max <= smallest_period)
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Checks if stream is scheduable according
+        /// to cyclic queuing and forwarding.
+        /// Used formulas:
+        /// WCD = (h + 1) * C
+        /// C = size / link_speed
+        /// </summary>
+        /// <param name="stream">Stream</param>
+        /// <param name="link">Link</param>
+        /// <param name="hops">Hops</param>
+        /// <returns></returns>
+        public bool IsScheduable(List<Stream> streams)
+        {
+            Dictionary<string, double> dict = new Dictionary<string, double>();
+            double smallest_period = 0.0;
+            double cycle_time_max = 0.0;
+
+            //build up cycle_time and and save the smallest_period of streams
             foreach (Stream stream in streams)
             {
                 double size_bit = stream.size * 8;
+                double deadline_s = stream.deadline / 1000000;
                 double period_s = stream.period / 1000000;
+
                 if (smallest_period == 0.0)
                     smallest_period = period_s;
                 if (smallest_period > period_s)
                     smallest_period = period_s;
 
-                foreach (List<Route> item in routes)
+
+                foreach (Route route in stream.Route)
                 {
-                    foreach (Route route in item)
+                    if (route.src == stream.source && route.dest == stream.destination)
                     {
-                        if (route.src == stream.source && route.dest == stream.destination)
+                        foreach (Link link in route.links)
                         {
-                            foreach (Link link in route.links)
+                            string link_name = link.source + "_" + link.destination;
+                            double linkSpeed_bit_per_s = link.speed * 8000000;
+                            double cycle_time = size_bit / linkSpeed_bit_per_s;
+
+                            if (dict.ContainsKey(link_name))
                             {
-                                double linkSpeed_bit_per_s = link.speed * 8000000;
-                                cycle_time += size_bit / linkSpeed_bit_per_s;
+                                dict[link_name] += cycle_time;
                             }
-                        }       
+                            else
+                            {
+                                dict[link_name] = cycle_time;
+                            }
+                        }
+                    }
+                }        
+            }
+            cycle_time_max = dict.Values.Max();
+
+            /*check each stream if their wcd is greater than deadline.
+             * if so, return false.
+             */
+            foreach (Stream stream in streams)
+            {
+                double deadline_s = stream.deadline / 1000000;
+
+                foreach (Route route in stream.Route)
+                {
+                    if (route.src == stream.source && route.dest == stream.destination)
+                    {
+                        int hops = FindHops(route);
+                        double wcd = (hops) * cycle_time_max;
+                        if (wcd > deadline_s)
+                            return false;
                     }
                 }
             }
 
-            if (cycle_time <= smallest_period)
+            /*also check if cycle time is greater
+             * than the smallest period among all streams.
+             * if so, return false.
+             */
+            if (cycle_time_max <= smallest_period)
                 return true;
             else
                 return false;
@@ -63,23 +167,18 @@ namespace TSN.Based.Distributed.CPS
         /// given a route.
         /// </summary>
         /// <param name="route">Route</param>
-        /// <returns></returns>
+        /// <returns>hop counts</returns>
         public int FindHops(Route route)
         {
-            int count = 0;
-
+            int hops = 0;
             foreach (Link link in route.links)
             {
                 if (link.destination.Contains("SW"))
-                {
-                    count++;
-                }
+                    hops += 1;
             }
-
-            return count;
+            return hops;
+            
         }
-
-
 
         /*
          * (1.25 B/us = 10 Mbit/s).
@@ -94,7 +193,6 @@ namespace TSN.Based.Distributed.CPS
          * beregningen af den brugte bandtwidth. Hvis den brugte bandwidth ikke overskrider speed eks. 10 Mbit/s, retuneres false.  
          */
 
-
         /// <summary>
         /// Checks if the bandwidth of 
         /// links are exceeded
@@ -104,12 +202,12 @@ namespace TSN.Based.Distributed.CPS
         /// </summary>
         /// <param name="s">Stream</param>
         /// <param name="r">List of route objects</param>
-        public bool IsBandwidthExceeded(Stream s, List<Route> r)
+        public bool IsBandwidthExceeded(Stream stream)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
-            double used_bandwidth_mbits = ((s.size * 8)/ (1000000)) / (s.period/1000000);
+            double used_bandwidth_mbits = ((stream.size * 8)/ (1000000)) / (stream.period/1000000);
 
-            foreach (Route item in r)
+            foreach (Route item in stream.Route)
             {
                 foreach (Link l in item.links)
                 {
@@ -152,36 +250,33 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="streams">List of Stream</param>
         /// <param name="routes">List of lists of routes</param>
         /// <returns></returns>
-        public bool IsBandwidthExceeded(List<Stream> streams, List<List<Route>> routes)
+        public bool IsBandwidthExceeded(List<Stream> streams)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
 
-            foreach (Stream s in streams)
+            foreach (Stream stream in streams)
             {
-                double used_bandwidth_mbits = ((s.size * 8) / (1000000)) / (s.period / 1000000);
+                double used_bandwidth_mbits = ((stream.size * 8) / (1000000)) / (stream .period / 1000000);
 
-                foreach (List<Route> items in routes)
+                foreach (Route item in stream.Route)
                 {
-                    foreach (Route item in items)
+                    if (item.src == stream.source && item.dest == stream.destination)
                     {
-                        if (item.src == s.source && item.dest == s.destination)
+                        foreach (Link l in item.links)
                         {
-                            foreach (Link l in item.links)
-                            {
-                                double bandwidth_mbits = l.speed * 8;
-                                string link_name = l.source + "_" + l.destination;
+                            double bandwidth_mbits = l.speed * 8;
+                            string link_name = l.source + "_" + l.destination;
 
-                                if (dict.ContainsKey(link_name))
-                                {
-                                    var old_val = dict[link_name][bandwidth_mbits];
-                                    Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
-                                    dict[link_name] = temp;
-                                }
-                                else
-                                {
-                                    Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
-                                    dict[link_name] = temp;
-                                }
+                            if (dict.ContainsKey(link_name))
+                            {
+                                var old_val = dict[link_name][bandwidth_mbits];
+                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, old_val + used_bandwidth_mbits } };
+                                dict[link_name] = temp;
+                            }
+                            else
+                            {
+                                Dictionary<double, double> temp = new Dictionary<double, double>() { { bandwidth_mbits, used_bandwidth_mbits } };
+                                dict[link_name] = temp;
                             }
                         }
                     }
@@ -199,12 +294,12 @@ namespace TSN.Based.Distributed.CPS
             return false;
         }
 
-        public bool IsBandwidthExceeded(Solution s, List<Route> r)
+        public bool IsBandwidthExceeded(Solution solution)
         {
             Dictionary<string, Dictionary<double, double>> dict = new Dictionary<string, Dictionary<double, double>>();
-            double used_bandwidth_mbits = ((s.size * 8) / (1000000)) / (s.period / 1000000);
+            double used_bandwidth_mbits = ((solution.size * 8) / (1000000)) / (solution.period / 1000000);
 
-            foreach (Route item in r)
+            foreach (Route item in solution.Route)
             {
                 foreach (Link l in item.links)
                 {
@@ -235,12 +330,5 @@ namespace TSN.Based.Distributed.CPS
             }
             return false;
         }
-
     }
-
 }
-
-
-
-
-

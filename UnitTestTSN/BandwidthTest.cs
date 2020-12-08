@@ -8,19 +8,16 @@ namespace UnitTestTSN
     [TestClass]
     public class BandwidthTest
     {
-        static List<Route> routes;
         static readonly LinkUtil linkUtil = new LinkUtil();
 
         [ClassInitialize]
         public static void BeforeClass(TestContext tc)
         {
-            routes = new List<Route>();
         }
 
         [TestInitialize]
         public void BeforeTest()
         {
-            routes.Clear();
         }
 
         [TestCleanup]
@@ -41,28 +38,31 @@ namespace UnitTestTSN
                 period = 1000,
                 deadline = 10000,
                 rl = 1,
-            };
-            Link link1 = new Link
-            {
-                source = "ES1",
-                destination = "SW0",
-                speed = 1.25,
-            };
-            Link link2 = new Link
-            {
-                source = "SW0",
-                destination = "ES3",
-                speed = 1.25,
-            };
-            Route route = new Route
-            {
-                links = new List<Link> { link1, link2 },
-                src = "ES1",
-                dest = "ES3",
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    }
+                }
             };
 
-            routes.Add(route);
-            var result = linkUtil.IsBandwidthExceeded(stream, routes);
+            var result = linkUtil.IsBandwidthExceeded(stream);
             Assert.IsFalse(result);
         }
 
@@ -74,56 +74,34 @@ namespace UnitTestTSN
                 streamId = "Stream1",
                 source = "ES2",
                 destination = "ES4",
-                size = 1000,
+                size = 100000,
                 period = 1000,
                 deadline = 10000,
                 rl = 2,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    }
+                }
             };
-            Link link1 = new Link
-            {
-                source = "ES2",
-                destination = "SW1",
-                speed = 1.25,
-            };
-            Link link2 = new Link
-            {
-                source = "SW1",
-                destination = "ES4",
-                speed = 1.25,
-            };
-            Route route1 = new Route
-            {
-                links = new List<Link> { link1, link2 },
-                src = "ES2",
-                dest = "ES4",
-            };
-            Link link3 = new Link
-            {
-                source = "ES2",
-                destination = "SW1",
-                speed = 1.25,
-            };
-            Link link4 = new Link
-            {
-                source = "SW1",
-                destination = "SW0",
-                speed = 1.25,
-            };
-            Link link5 = new Link
-            {
-                source = "SW0",
-                destination = "ES4",
-                speed = 1.25,
-            };
-            Route route2 = new Route
-            {
-                links = new List<Link> { link3, link4, link5 },
-                src = "ES2",
-                dest = "ES4",
-            };
-            routes.Add(route1);
-            routes.Add(route2);
-            var result = linkUtil.IsBandwidthExceeded(stream, routes);
+            var result = linkUtil.IsBandwidthExceeded(stream);
             Assert.IsTrue(result);
         }
 
@@ -140,7 +118,47 @@ namespace UnitTestTSN
                 period = 1000,
                 deadline = 10000,
                 rl = 1,
-                },
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                }},
                 new Stream
                 {
                 streamId = "Stream1",
@@ -150,96 +168,50 @@ namespace UnitTestTSN
                 period = 1000,
                 deadline = 10000,
                 rl = 2,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
                 }
+            }
         };
-
-            List<List<Route>> routes = new List<List<Route>>
-            {
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> { 
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                },
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                }
-            };
-
-            var result = linkUtil.IsBandwidthExceeded(streams, routes);
+            var result = linkUtil.IsBandwidthExceeded(streams);
             Assert.IsFalse(result);
         }
 
@@ -252,10 +224,51 @@ namespace UnitTestTSN
                 streamId = "Stream0",
                 source = "ES1",
                 destination = "ES3",
-                size = 100,
+                size = 10000,
                 period = 1000,
                 deadline = 10000,
                 rl = 1,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                },
                 },
                 new Stream
                 {
@@ -266,96 +279,50 @@ namespace UnitTestTSN
                 period = 1000,
                 deadline = 10000,
                 rl = 2,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                }
                 }
         };
-
-            List<List<Route>> routes = new List<List<Route>>
-            {
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                },
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                }
-            };
-
-            var result = linkUtil.IsBandwidthExceeded(streams, routes);
+            var result = linkUtil.IsBandwidthExceeded(streams);
             Assert.IsTrue(result);
         }
 
@@ -423,7 +390,7 @@ namespace UnitTestTSN
             };
 
             var result = linkUtil.FindHops(route);
-            Assert.AreNotEqual(2, result);
+            Assert.AreNotEqual(3, result);
         }
 
         [TestMethod]
@@ -439,6 +406,47 @@ namespace UnitTestTSN
                 period = 100000,
                 deadline = 10000,
                 rl = 1,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                },
                 },
                 new Stream
                 {
@@ -449,96 +457,50 @@ namespace UnitTestTSN
                 period = 10000,
                 deadline = 10000,
                 rl = 2,
+                Route =                 new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                }
                 }
         };
-
-            List<List<Route>> routes = new List<List<Route>>
-            {
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                },
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                }
-            };
-
-            var result = linkUtil.IsScheduable(streams, routes);
+            var result = linkUtil.IsScheduable(streams);
             Assert.IsTrue(result);
         }
 
@@ -552,10 +514,51 @@ namespace UnitTestTSN
                 streamId = "Stream0",
                 source = "ES1",
                 destination = "ES3",
-                size = 100,
+                size = 100000,
                 period = 1000,
                 deadline = 10000,
                 rl = 1,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                },
                 },
                 new Stream
                 {
@@ -566,96 +569,50 @@ namespace UnitTestTSN
                 period = 1000,
                 deadline = 10000,
                 rl = 2,
+                Route = new List<Route>
+                {
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES1",
+                                destination = "SW0",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW0",
+                                destination = "ES3",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES1",
+                        dest = "ES3",
+                    },
+                    new Route
+                    {
+                        links = new List<Link> {
+                            new Link
+                            {
+                                source = "ES2",
+                                destination = "SW1",
+                                speed = 1.25,
+                            },
+                            new Link
+                            {
+                                source = "SW1",
+                                destination = "ES4",
+                                speed = 1.25,
+                            }
+                        },
+                        src = "ES2",
+                        dest = "ES4",
+                    }
+                }
                 }
         };
-
-            List<List<Route>> routes = new List<List<Route>>
-            {
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                },
-                new List<Route>
-                {
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES1",
-                                destination = "SW0",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW0",
-                                destination = "ES3",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES1",
-                        dest = "ES3",
-                    },
-                    new Route
-                    {
-                        links = new List<Link> {
-                            new Link
-                            {
-                                source = "ES2",
-                                destination = "SW1",
-                                speed = 1.25,
-                            },
-                            new Link
-                            {
-                                source = "SW1",
-                                destination = "ES4",
-                                speed = 1.25,
-                            }
-                        },
-                        src = "ES2",
-                        dest = "ES4",
-                    }
-                }
-            };
-
-            var result = linkUtil.IsScheduable(streams, routes);
+            var result = linkUtil.IsScheduable(streams);
             Assert.IsFalse(result);
         }
     }

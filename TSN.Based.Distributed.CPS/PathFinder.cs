@@ -1,93 +1,142 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
 {
     class PathFinder
     {
-
-        public Route FindPath(string src, string dest, List<Link> links, List<Device> devices, List<String> visited, Route usedLinks)
+        public List<Route> FindAllPaths(string src, string dest, List<Link> links, List<Device> devices)
         {
-            usedLinks.links ??= new List<Link>();
-            //find all available links from the current source. 
-            //Check that the destination of the link is either a new switch or det requested end-destination.
-            //Also sorts out already visited switches to prevent looping of the algorithmn. 
+            List<string> deviceNames = new List<string>();
+            List<Device> availDevices = devices.FindAll(d => d.type == "Switch" || d.name == src || d.name == dest);
+            foreach (Device dn in availDevices) { deviceNames.Add(dn.name); }
+
             List<Link> availableLinks =
-                links.FindAll(link => link.source == src && (link.destination == dest || devices.FindAll(d => d.type == "Switch").Exists(d => d.name == link.destination)))
-                .FindAll(link => !visited.Contains(link.destination));
-            if (availableLinks.Exists(l => l.destination == dest))
-            {
-                usedLinks.links.Add(availableLinks.Find(link => link.destination == dest));
-                usedLinks.src = src;
-                usedLinks.dest = dest;
-                return usedLinks;
-            }
-            else
-            {
-                Random rand = new Random();
-                int r = rand.Next(availableLinks.Count);
-                usedLinks.links.Add(availableLinks[r]);
-                visited.Add(availableLinks[r].destination);
-                usedLinks.links.Concat(FindPath(availableLinks[r].destination, dest, links, devices, visited, usedLinks).links);
-                usedLinks.src = src;
-                usedLinks.dest = dest;
-            }
-            return usedLinks;
-        }
+                links.FindAll(link => link.source == src || link.destination == dest || (deviceNames.Contains(link.source) && deviceNames.Contains(link.destination)));
 
-        public List<Route> FindMultiplePaths(string src, string dest, List<Link> links, List<Device> devices, int RL, List<String> visited, List<Route> usedLinks)
+            Graph g = new Graph(deviceNames, links);
+
+            foreach (Link link in availableLinks)
+            {
+                g.addEdge(link.source, link.destination);
+
+            }
+            
+            //Print info in console
+            //Console.WriteLine("Following are all different"
+            //                  + " paths from " + src + " to " + dest);
+
+            List<Route> routes = g.GetAllPaths(src, dest);
+            return routes;
+        }
+    }
+
+    public class Graph
+    {
+
+        // Number of switches + src and dest in graph 
+        private List<string> devices;
+        private Dictionary<string, List<string>> adjList;
+        private List<Route> routes;
+        private List<Link> links;
+        private int solutionNo;
+        private string ogSrc;
+        private string ogDest;
+
+        // Constructor 
+        public Graph(List<string> devices, List<Link> links)
         {
-            if (usedLinks.Count < RL)
-                for(int r = 0; r < RL; r++)
-                {
-                    usedLinks.Add(new Route());
-                }
 
-            for (int i = 0; i < RL; i++)
-            {
-                //Init Route
-                
-                usedLinks[i].src ??= src;
-                usedLinks[i].dest ??= dest;
-                usedLinks[i].links ??= new List<Link>();
+            // initialise vertex count 
+            this.devices = devices;
+            this.links = links;
+            solutionNo = 0;
+            routes = new List<Route>();
 
-
-                if(!usedLinks[i].links.Exists(l => l.destination == dest))
-                    {
-                    List<Link> availableLinks =
-                            links.FindAll(link => link.source == src && (link.destination == dest || devices.FindAll(d => d.type == "Switch").Exists(d => d.name == link.destination)))
-                            .FindAll(link => !visited.Contains(link.destination));
-                    if (availableLinks.Exists(l => l.destination == dest))
-                    {
-                        usedLinks[i].links.Add(availableLinks.Find(link => link.destination == dest));
-                        return usedLinks;
-                    }
-                    else if(availableLinks.Count > 0)
-                    {
-                        //Pick a link witch has not been utilized yet 
-                        Random rand = new Random();
-                        int r = rand.Next(availableLinks.Count);
-                        usedLinks[i].links.Add(availableLinks[r]);
-                        visited.Add(availableLinks[r].destination);
-                        usedLinks.Concat(FindMultiplePaths(availableLinks[r].destination, dest, links, devices, RL, visited, usedLinks));
-                    }
-                    else
-                    {
-                        //If no alternative link is available, reuse one. 
-                        availableLinks =
-                               links.FindAll(link => link.source == src && (link.destination == dest || devices.FindAll(d => d.type == "Switch").Exists(d => d.name == link.destination)));
-                        Random rand = new Random();
-                        int r = rand.Next(availableLinks.Count);
-                        usedLinks[i].links.Add(availableLinks[r]);
-                        visited.Add(availableLinks[r].destination);
-                        usedLinks.Concat(FindMultiplePaths(availableLinks[r].destination, dest, links, devices, RL, visited, usedLinks));
-                    }
-                }
-            }
-            return usedLinks;
+            // initialise adjacency list 
+            initAdjList();
         }
 
+        // utility method to initialise 
+        // adjacency list 
+        private void initAdjList()
+        {
+            adjList = new Dictionary<string, List<string>>();
+
+            foreach (string device in devices)
+            {
+                adjList.Add(device, new List<string>());
+            }
+        }
+
+        // add edge from u to v 
+        public void addEdge(string src, string dest)
+        {
+            // Add link to list. 
+            adjList[src].Add(dest);
+        }
+
+        private void allPathsUtil(string src, string dest,
+                                              Dictionary<string, bool> isVisited,
+                                              List<string> localPathList)
+        {
+
+            if (src.Equals(dest))
+            {
+                //See output in console
+                //Console.WriteLine(string.Join(" ", localPathList));
+
+                routes.Add(new Route());
+                routes[solutionNo].src = ogSrc;
+                routes[solutionNo].dest = ogDest;
+                routes[solutionNo].id = solutionNo;
+                routes[solutionNo].links = new List<Link>();
+
+                for (int i = 0; i < localPathList.Count - 1; i++)
+                {
+                    routes[solutionNo].links.Add(links.Find(l => l.source == localPathList[i] && l.destination == localPathList[i + 1]));
+                }
+                solutionNo = solutionNo + 1;
+                return;
+            }
+
+            // Mark the current node 
+            isVisited[src] = true;
+
+            // Recur for all the vertices 
+            // adjacent to current vertex 
+            foreach (string i in adjList[src])
+            {
+                if (!isVisited[i])
+                {
+                    // store current node 
+                    // in path[] 
+                    localPathList.Add(i);
+                    allPathsUtil(i, dest, isVisited,
+                                      localPathList);
+
+                    // remove current node 
+                    // in path[] 
+                    localPathList.Remove(i);
+                }
+            }
+            // Mark the current node 
+            isVisited[src] = false;
+        }
+        public List<Route> GetAllPaths(string src, string dest)
+        {
+            Dictionary<string, bool> isVisited = new Dictionary<string, bool>();
+            foreach (string device in devices) { isVisited.Add(device, false); }
+
+            List<string> pathList = new List<string>();
+            // add source to path[] 
+            pathList.Add(src);
+            ogSrc = src;
+            ogDest = dest;
+            // Call recursive utility 
+            allPathsUtil(src, dest, isVisited, pathList);
+
+            return this.routes;
+        }
     }
 }
