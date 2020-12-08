@@ -23,6 +23,9 @@ namespace TSN.Based.Distributed.CPS
                 case 3:
                     xmlsolution = "TC5_large.solution";
                     break;
+                case 4:
+                    xmlsolution = "TC7_huge.solution";
+                    break;
             }
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;

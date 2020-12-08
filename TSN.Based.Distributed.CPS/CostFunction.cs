@@ -13,10 +13,16 @@ namespace TSN.Based.Distributed.CPS
         /// </summary>
         /// <param name="input"></param>
         /// <returns>Cost as a double</returns>
-        public double CalcCostFunction(List<Solution> input) 
+        public double CalcCostFunction(List<Solution> input, List<Device> devices, List<Link> links) 
         {
             LinkUtil lu = new LinkUtil();
             double totalCost = 0;
+
+            int coveredone = new CoveredLinks().numberOfOneLinksCovered(input, devices, links);
+            int coveredtwo = new CoveredLinks().numberOfTwoLinksCovered(input, devices, links);
+            //int coveredtwo = 0;
+            //int coveredone = 0;
+
 
             foreach (Solution sol in input)
             {
@@ -25,7 +31,9 @@ namespace TSN.Based.Distributed.CPS
 
                 // Use LinkUtil to test bandwidth
                 int BandTerm = new LinkUtil().IsBandwidthExceeded(sol) ? 1 : 0;
-                int ScheduTerm = new LinkUtil().IsScheduable(stream(sol)) ? 1 : 0;
+                int ScheduTerm = new LinkUtil().IsScheduable(stream(sol)) ? 0 : 1;
+                //int ScheduTerm = 0;
+
 
                 // Overlapping links
                 foreach (Route route in sol.Route)
@@ -38,14 +46,13 @@ namespace TSN.Based.Distributed.CPS
                     LenTerm += route.links.Count;
                 }
 
-                int OverlapTerm = linkmap.Where(links => links.Value > 1).Count();
-
-                // Average length of routes
-                LenTerm = LenTerm / sol.Route.Count();
+                var overlap = linkmap.Where(links => links.Value > 1).ToList();
+                var keys = overlap.Count();
+                int OverlapTerm = overlap.Sum(value => value.Value) - overlap.Count();
 
                 // Total cost calc
-                totalCost += CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm);
-                sol.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm);
+                totalCost += CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm, coveredone, coveredtwo);
+                sol.Cost = CostCalc(BandTerm, OverlapTerm, LenTerm, ScheduTerm, coveredone, coveredtwo);
             }
 
             return totalCost;
@@ -58,12 +65,18 @@ namespace TSN.Based.Distributed.CPS
         /// <param name="OverlapTerm"></param>
         /// <param name="LenTerm"></param>
         /// <returns>Returns cost for item as double</returns>
-        public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm, double ScheduTerm)
+        public double CostCalc(double BandTerm, int OverlapTerm, double LenTerm, double ScheduTerm, int coveredone, int coveredtwo)
         {
-            return double.Parse(ConfigurationManager.AppSettings.Get("w1")) * BandTerm + 
-                double.Parse(ConfigurationManager.AppSettings.Get("w2")) * OverlapTerm + 
-                double.Parse(ConfigurationManager.AppSettings.Get("w3")) * LenTerm +
-                double.Parse(ConfigurationManager.AppSettings.Get("w4")) * ScheduTerm;
+            return (double.Parse(ConfigurationManager.AppSettings.Get("w1")) * BandTerm) +
+                (double.Parse(ConfigurationManager.AppSettings.Get("w2")) * (coveredone + coveredtwo)) +
+                (double.Parse(ConfigurationManager.AppSettings.Get("w3")) * LenTerm) +
+                (double.Parse(ConfigurationManager.AppSettings.Get("w4")) * ScheduTerm);
+
+            // (double.Parse(ConfigurationManager.AppSettings.Get("w4")) * ScheduTerm)
+            // (double.Parse(ConfigurationManager.AppSettings.Get("w2")) * (coveredone + coveredtwo))
+            // double.Parse(ConfigurationManager.AppSettings.Get("w2")) * OverlapTerm +
+            // + double.Parse(ConfigurationManager.AppSettings.Get("w2")) * (coveredone + coveredtwo); - Run covered uden overlap og schedule + den her
+            // (double.Parse(ConfigurationManager.AppSettings.Get("w2")) * (coveredone + coveredtwo)) +
         }
 
 

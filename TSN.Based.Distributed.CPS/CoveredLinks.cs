@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS
@@ -9,9 +11,10 @@ namespace TSN.Based.Distributed.CPS
         public int numberOfOneLinksCovered(List<Solution> input, List<Device> devices, List<Link> links)
         {
             int count = 0;
-            PathFinder path = new PathFinder();
-            foreach (Solution sol in input)
+
+            foreach (var sol in input)
             {
+                PathFinder path = new PathFinder();
                 List<Link> allLinks = links.FindAll(l => sol.Route.Exists(r => r.links.Contains(l)));
                 foreach (Link l in allLinks.ToList())
                 {
@@ -28,28 +31,33 @@ namespace TSN.Based.Distributed.CPS
         {
             int count = 0;
 
-            PathFinder path = new PathFinder();
-            foreach (Solution sol in input)
+            foreach (var sol in input)
             {
+                PathFinder path = new PathFinder();
                 List<Link> allLinks = links.FindAll(l => sol.Route.Exists(r => r.links.Contains(l)));
+                List<(Link, Link)> parlist = new List<(Link, Link)>();
 
-                for (int i = 0; i < allLinks.Count - 1; i++)
+                for (int j = 0; j < sol.Route.Count(); j++)
                 {
-                    List<Link> temp = allLinks.FindAll(l => (allLinks[i].source != l.source && allLinks[i].destination != l.destination) ||
-                                     (allLinks[i + 1].source != l.source && allLinks[i + 1].destination != l.destination));
+                    for (int k = 0; k < sol.Route[j].links.Count() - 1; k++) parlist.Add((sol.Route[j].links[k], sol.Route[j].links[k + 1]));
+                }
 
-                    // dunno
-                    for (int counter = 0; counter < temp.Count(); counter++)
-                    {
-                        allLinks.Remove(temp[counter]);
-                    }
+                parlist.Distinct();
 
-                    List<Route> allRoutes = path.FindAllPaths(sol.source, sol.destination, temp, devices);
+                for (int i = 0; i < parlist.Count; i++)
+                {
+                    var link1 = new Link();
+                    var link2 = new Link();
 
-                    foreach (Link link in temp)
-                    {
-                        allLinks.Add(link);
-                    }
+                    (link1, link2) = parlist[i];
+
+                    allLinks.Remove(link1);
+                    allLinks.Remove(link2);
+
+                    List<Route> allRoutes = path.FindAllPaths(sol.source, sol.destination, allLinks, devices);
+
+                    allLinks.Add(link1);
+                    allLinks.Add(link2);
 
                     if (allRoutes.Count < 1) count++;
                 }

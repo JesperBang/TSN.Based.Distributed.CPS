@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TSN.Based.Distributed.CPS.Models;
 
 namespace TSN.Based.Distributed.CPS

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Xml.Linq;
 using TSN.Based.Distributed.CPS.Models;
 
@@ -26,9 +25,13 @@ namespace TSN.Based.Distributed.CPS
                 case 3:
                     xmlfile = "TC5_large1.app_network_description";
                     break;
+                case 4:
+                    xmlfile = "TC7_huge.app_network_description";
+                    break;
             }
 
             string filename = "../../../inputs/" + xmlfile;
+            //string filename = "/inputs/" + xmlfile;
             List<Device> devices = new List<Device>();
             List<Link> link = new List<Link>();
             List<Stream> stream = new List<Stream>();

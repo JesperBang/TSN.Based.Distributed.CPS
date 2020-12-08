@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using TSN.Based.Distributed.CPS.Models;
 
 
 namespace TSN.Based.Distributed.CPS
@@ -15,7 +12,7 @@ namespace TSN.Based.Distributed.CPS
 
             while (!input)
             {
-                Console.WriteLine("Please select test file: Press 1 for small.xml, 2 for medium.xml or 3 for large.xml");
+                Console.WriteLine("Please select test file: Press 1 for small.xml, 2 for medium.xml, 3 for large.xml or 4 for huge");
                 try
                 {
                     num = Convert.ToInt32(Console.ReadLine());
@@ -26,9 +23,9 @@ namespace TSN.Based.Distributed.CPS
                     num = 0;
                 }
 
-                if ((num <= 0) || (num >= 4))
+                if ((num <= 0) || (num >= 6))
                 {
-                    Console.WriteLine("Input must be 1, 2 or 3");
+                    Console.WriteLine("Input must be 1, 2, 3 or 4");
                 }
                 else
                 {
